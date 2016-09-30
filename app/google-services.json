@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "67097848535",
+    "firebase_url": "https://test1-61357.firebaseio.com",
+    "project_id": "test1-61357",
+    "storage_bucket": "test1-61357.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67097848535:android:7dc9cd073ab5c6e0",
+        "android_client_info": {
+          "package_name": "nl.hs_hague.urbangame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67097848535-78rb7i74rn6ta62hrd4024eqv1mlr320.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpJvyG8xW3hM8yUVr-spDm6t1xB9Jqp34"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
