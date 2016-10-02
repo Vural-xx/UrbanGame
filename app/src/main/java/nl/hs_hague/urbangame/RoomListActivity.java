@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -120,6 +121,10 @@ public class RoomListActivity extends AppCompatActivity {
         }else if (id ==  R.id.action_settings){
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
+        }else if (id == R.id.menu_create){
+            DialogFragment createFragment = new RoomCreateFragment();
+            createFragment.show(getSupportFragmentManager(),"RoomListActivity");
+
         }
         return super.onOptionsItemSelected(item);
     }

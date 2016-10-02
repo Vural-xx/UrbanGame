@@ -13,4 +13,10 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
+    <item android:id="@+id/menu_create"
+        android:title="@string/menu_create"
+        android:icon="@drawable/ic_action_create"
+        app:showAsAction="ifRoom" />
+
+
 </menu>
