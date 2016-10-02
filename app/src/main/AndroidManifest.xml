@@ -25,6 +25,16 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"></action>
+            </intent-filter>
+
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"></meta-data>
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".RoomListActivity"></meta-data>
+
+
         </activity>
         <activity
             android:name=".RoomDetailActivity"
