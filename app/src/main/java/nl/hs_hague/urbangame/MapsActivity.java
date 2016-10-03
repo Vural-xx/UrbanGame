@@ -8,6 +8,7 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DateFormat;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener {
 
     private GoogleMap mMap; //The map that we will show
     private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
@@ -38,7 +40,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public List<Address> markersAddress; //Arraylist where are saved the addresses of the result from the search, in this demo it is searching for Jumbo stores
     private List<LatLng> markers; //Arraylist where are save the latitude and the longitude of the elements of the markersAddress array
     public Geocoder geo; //Object to get access to the geolocation
+    MarkersFragment dialog;
     String mess;
+
     /*Initializing the map*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +73,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override
             public void onMapLongClick(LatLng latLng) {
-                int index=0;
+                int index = 0;
                 markers.add(latLng);
                 index = markers.size();
-                for(int i = 0; i <markers.size(); i++)
-                    System.out.println("Marker "+i+" "+markers.get(i).latitude+" "+markers.get(i).longitude);
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker "+index));
+                for (int i = 0; i < markers.size(); i++)
+                    System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
             }
         });
-        // mMap.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
     }
     /*Mandatory methods*/
@@ -94,6 +108,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.disconnect();
         super.onStop();
 
+    }
+
+    public void showNoticeDialog() {
+        // Create an instance of the dialog fragment and show it
+        dialog = new MarkersFragment();
+        dialog.show(getSupportFragmentManager(), "Add a name to your marker");
     }
 
     @Override
@@ -122,6 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mess = "Your address is:";
                 Toast.makeText(this, mess+resAddress.get(0).getAddressLine(0)+" "+resAddress.get(0).getPostalCode(),
                         Toast.LENGTH_LONG).show();
+                addMarkers("Jumbo","The Hague");
                 /*Showing the current location**/
             }
             catch(Exception e){
@@ -163,6 +184,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 for (int i = 0; i < markers.size(); i++) {
                     mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("Jumbo no: " + i));
+                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                        @Override
+                        public boolean onMarkerClick(Marker arg0) {
+                            showNoticeDialog();
+                            try {
+                                System.out.print(dialog.name);
+                                arg0.setTitle(dialog.name);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
+                    });
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -189,5 +224,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        System.out.println(this.dialog.name);
+    }
+
 
 }
