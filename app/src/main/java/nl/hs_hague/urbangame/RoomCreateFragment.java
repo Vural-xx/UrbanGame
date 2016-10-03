@@ -69,4 +69,5 @@ public class RoomCreateFragment extends DialogFragment {
         getDialog().setTitle(R.string.create_room);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
 }

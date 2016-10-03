@@ -129,6 +129,12 @@ public class RoomListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onClick(View view){
+        if(view.getId() == R.id.btnSetCheckpoints){
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        }
+    }
 
 
 }

@@ -87,4 +87,5 @@
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="title_activity_maps">Map</string>
+    <string name="set_checkpoints">Set Checkpoints</string>
 </resources>
