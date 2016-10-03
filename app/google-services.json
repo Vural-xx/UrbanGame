@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "67097848535",
-    "firebase_url": "https://test1-61357.firebaseio.com",
-    "project_id": "test1-61357",
-    "storage_bucket": "test1-61357.appspot.com"
+    "project_number": "123005331848",
+    "firebase_url": "https://urbangame-4f82c.firebaseio.com",
+    "project_id": "urbangame-4f82c",
+    "storage_bucket": "urbangame-4f82c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:67097848535:android:7dc9cd073ab5c6e0",
+        "mobilesdk_app_id": "1:123005331848:android:7dc9cd073ab5c6e0",
         "android_client_info": {
           "package_name": "nl.hs_hague.urbangame"
         }
       },
       "oauth_client": [
         {
-          "client_id": "67097848535-78rb7i74rn6ta62hrd4024eqv1mlr320.apps.googleusercontent.com",
+          "client_id": "123005331848-ci80cvlcj2v837fas3nd71a12gdr6pm1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCpJvyG8xW3hM8yUVr-spDm6t1xB9Jqp34"
+          "current_key": "AIzaSyCOWNSW-55X25E6nlqptp2DmJqCkNgFYoQ"
         }
       ],
       "services": {
