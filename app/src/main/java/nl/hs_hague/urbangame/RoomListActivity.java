@@ -16,10 +16,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import nl.hs_hague.urbangame.adapter.RoomAdapter;
+import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.model.Room;
 
 /**
@@ -38,7 +46,10 @@ public class RoomListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private ListView lvRooms;
+    private ArrayList<Room> rooms = new ArrayList<Room>();
+    RoomAdapter roomAdapter;
     private Context context = null;
+    public static DatabaseHandler databaseHandler = new DatabaseHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +65,8 @@ public class RoomListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         lvRooms = (ListView) findViewById(R.id.lvRooms);
-        lvRooms.setAdapter(new RoomAdapter(this, R.layout.room_list_content, generateRooms()));
+        roomAdapter = new RoomAdapter(this, R.layout.room_list_content, rooms);
+        lvRooms.setAdapter(roomAdapter);
         context = this;
 
         lvRooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,6 +98,30 @@ public class RoomListActivity extends AppCompatActivity {
             Toast.makeText(this,query, Toast.LENGTH_SHORT).show();
         }
 
+        databaseHandler = new DatabaseHandler();
+
+
+        databaseHandler.getRoot().child("rooms").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Set<Room> set = new HashSet<Room>();
+                Iterator i = dataSnapshot.getChildren().iterator();
+
+                while (i.hasNext()){
+                    set.add(new Room(((DataSnapshot)i.next()).getKey()));
+                }
+                rooms.clear();
+                rooms.addAll(set);
+                roomAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -103,7 +139,6 @@ public class RoomListActivity extends AppCompatActivity {
         rooms.add(new Room("Room2"));
         return rooms;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

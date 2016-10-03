@@ -19,6 +19,12 @@ public class Room implements Serializable {
         this.name = name;
     }
 
+    public Room(String name, Date startDate, Date endDate){
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public String getName() {
         return name;
     }

@@ -15,7 +15,7 @@
             android:layout_weight="1"
             android:text="@string/name" />
         <EditText
-            android:id="@+id/room_names"
+            android:id="@+id/create_room_name"
             android:layout_weight="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:text="@string/start" />
         <EditText
-            android:id="@+id/room_start"
+            android:id="@+id/create_room_start"
             android:layout_weight="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:text="@string/end" />
         <EditText
-            android:id="@+id/room_end"
+            android:id="@+id/create_room_end"
             android:layout_weight="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
