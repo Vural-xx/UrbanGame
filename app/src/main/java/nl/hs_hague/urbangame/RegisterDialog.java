@@ -31,12 +31,12 @@ public class RegisterDialog extends DialogFragment {
                         EditText etPass1 = (EditText) getDialog().findViewById(R.id.editTextPass1);
                         EditText etPass2 = (EditText) getDialog().findViewById(R.id.editTextPass2);
 
-                        String username = etUsername.toString();
-                        String email = etEmail.toString();
-                        String pass1 = etPass1.toString();
-                        String pass2 = etPass2.toString();
+                        String username = etUsername.getText().toString();
+                        String email = etEmail.getText().toString();
+                        String pass1 = etPass1.getText().toString();
+                        String pass2 = etPass2.getText().toString();
 
-                        if(username != "" && email != "" && pass1 != "") {
+                        if(!username.equals("") && !email.equals("") && !pass1.equals("")) {
 
                             if(pass1.equals(pass2)) {
                                 User newUser = new User();
@@ -48,6 +48,7 @@ public class RegisterDialog extends DialogFragment {
 
                                 DatabaseHandler db = new DatabaseHandler();
                                 db.createUser(newUser);
+                                Toast.makeText(getContext(), R.string.passwords_unmatching, Toast.LENGTH_LONG).show();
                             }
 
                             else{

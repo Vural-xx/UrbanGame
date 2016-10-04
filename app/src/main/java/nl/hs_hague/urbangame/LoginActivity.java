@@ -366,13 +366,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent myIntent = new Intent(LoginActivity.this, Welcome_Screen.class); // welcome_screen is the main activity?
+                Intent myIntent = new Intent(LoginActivity.this, RoomListActivity.class);
                 LoginActivity.this.startActivity(myIntent);
-
+//RoomListActivity.valid_login=true;
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+ //RoomListActivity.valid_login=false;
+
             }
         }
 
