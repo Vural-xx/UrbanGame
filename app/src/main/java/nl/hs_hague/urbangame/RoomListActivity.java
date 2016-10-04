@@ -33,13 +33,9 @@ import nl.hs_hague.urbangame.adapter.RoomAdapter;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
-
+import com.facebook.AccessToken;
 public class RoomListActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
     private boolean mTwoPane;
     private ListView lvRooms;
     private ArrayList<Room> rooms = new ArrayList<Room>();
@@ -48,12 +44,19 @@ public class RoomListActivity extends AppCompatActivity {
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
+    public boolean valid_login=true;//jackub you have to set this variable "true" if login was succesful, "false" otherwise
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_list);
 
+        /////// asks if you already logged in on facebook or normal login
+         if((AccessToken.getCurrentAccessToken()==null) ||valid_login==false)
+         {
+             goLogin();
+         }
+        ////
         if (findViewById(R.id.room_detail_container) != null) {
             mTwoPane = true;
         }
@@ -129,6 +132,12 @@ public class RoomListActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void goLogin() {
+        Intent intent= new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override

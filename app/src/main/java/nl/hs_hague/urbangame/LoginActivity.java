@@ -91,11 +91,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        ////////////////////////////////facebook Login
+
+        ///////////////////////////////facebook Login
         loginButton= (LoginButton) findViewById(R.id.facebook_button);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getApplicationContext(),"we did it nigga",Toast.LENGTH_SHORT).show();
                     goRoomActivity();
             }
 
@@ -125,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
           super.onActivityResult(requestCode,resultCode,data);
           callbackManager.onActivityResult(requestCode,resultCode,data);
     }
-    //////////////////////////////////7
+    //////////////////////////////////
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
