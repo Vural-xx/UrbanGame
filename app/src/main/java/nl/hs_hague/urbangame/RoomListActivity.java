@@ -3,7 +3,9 @@ package nl.hs_hague.urbangame;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -45,19 +47,12 @@ public class RoomListActivity extends AppCompatActivity {
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
-    public boolean valid_login=true;//jackub you have to set this variable "true" if login was succesful, "false" otherwise
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_list);
 
-        /////// asks if you already logged in on facebook or normal login
-         if((AccessToken.getCurrentAccessToken()==null) ||valid_login==false)
-         {
-             goLogin();
-         }
-        ////
         if (findViewById(R.id.room_detail_container) != null) {
             mTwoPane = true;
         }
@@ -179,7 +174,9 @@ public class RoomListActivity extends AppCompatActivity {
 
         }else if(id == R.id.action_logout){
             LoginManager.getInstance().logOut();//log out facebook
-            valid_login=false;// log out normal login
+            SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor=preferences.edit();
+            editor.putBoolean("Login",false).apply();
             goLogin();
         }
         return super.onOptionsItemSelected(item);
