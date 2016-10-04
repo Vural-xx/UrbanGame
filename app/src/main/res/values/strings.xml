@@ -2,7 +2,7 @@
     <string name="app_name">UrbanGame</string>
     <string name="title_room_detail">Room Detail</string>
     <string name="title_activity_settings">Settings</string>
-
+    <string name="facebook_app_id">1712006699124185</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
