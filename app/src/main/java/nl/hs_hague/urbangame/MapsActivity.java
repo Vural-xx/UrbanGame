@@ -1,6 +1,7 @@
 package nl.hs_hague.urbangame;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<LatLng> markers; //Arraylist where are save the latitude and the longitude of the elements of the markersAddress array
     public Geocoder geo; //Object to get access to the geolocation
     MarkersFragment dialog;
+    private  Context context;
     String mess;
 
     /*Initializing the map*/
@@ -54,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         geo = new Geocoder(this);
         markers = new ArrayList<LatLng>();
-
+        context = this;
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -73,18 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                int index = 0;
-                markers.add(latLng);
-                index = markers.size();
-                for (int i = 0; i < markers.size(); i++)
-                    System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
-            }
-        });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -142,7 +133,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mess = "Your address is:";
                 Toast.makeText(this, mess+resAddress.get(0).getAddressLine(0)+" "+resAddress.get(0).getPostalCode(),
                         Toast.LENGTH_LONG).show();
-                addMarkers("Jumbo","The Hague");
+                //addMarkers("Jumbo","The Hague");
+
+                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        int index = 0;
+                        String cLocality, mLocality;
+                        markers.add(latLng);
+                        index = markers.size();
+                         try{
+                             //Getting the locality of the potential marker
+                            markersAddress = geo.getFromLocation(latLng.latitude,latLng.longitude,2);
+                             mLocality = markersAddress.get(0).getLocality();
+                             //Getting our current locality
+                             markersAddress = geo.getFromLocation(cLocation.latitude,cLocation.longitude,2);
+                             cLocality = markersAddress.get(0).getLocality();
+
+                             if(cLocality.equals(mLocality)){
+                                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
+                                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                                         @Override
+                                         public boolean onMarkerClick(Marker arg0) {
+                                             showNoticeDialog();
+                                             try {
+                                                 System.out.print(dialog.name);
+                                                 arg0.setTitle(dialog.name);
+                                             }
+                                             catch (Exception e){
+                                                 e.printStackTrace();
+                                             }
+                                             return true;
+                                         }
+                                     });
+                                 for (int i = 0; i < markers.size(); i++)
+                                     System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
+                             }
+                             else{
+                                 Toast.makeText(context,"You can not add marker out of your current city", Toast.LENGTH_SHORT).show();
+                             }
+
+
+                         }
+                         catch(Exception e){
+                             e.printStackTrace();
+                         }
+
+
+                    }
+                });
                 /*Showing the current location**/
             }
             catch(Exception e){
