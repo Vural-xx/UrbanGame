@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.database.DataSnapshot;
@@ -177,7 +178,9 @@ public class RoomListActivity extends AppCompatActivity {
             createFragment.show(getSupportFragmentManager(),"RoomListActivity");
 
         }else if(id == R.id.action_logout){
-            Toast.makeText(this, "Here is the logout", Toast.LENGTH_SHORT).show();
+            LoginManager.getInstance().logOut();//log out facebook
+            valid_login=false;// log out normal login
+            goLogin();
         }
         return super.onOptionsItemSelected(item);
     }
