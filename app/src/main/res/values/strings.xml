@@ -103,6 +103,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="passwords_unmatching">Both passwords fields must match</string>
+    <string name="fields_unfilled">You have to fill all the fields to proceed</string>
 
     <string name="accept">accept</string>
 </resources>
