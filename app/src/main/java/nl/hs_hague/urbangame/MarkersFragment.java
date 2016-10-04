@@ -19,29 +19,36 @@ public class MarkersFragment extends DialogFragment {
     String name;
     EditText name_text;
 
+
     public interface MakersFragmentListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog, String name);
     }
 
     MakersFragmentListener mListener;
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
-        final LayoutInflater inflater = getActivity().getLayoutInflater();
+       final LayoutInflater inflater = getActivity().getLayoutInflater();
         final View inflator = inflater.inflate(R.layout.layout_markers_fragment, null);
-        name_text = (EditText) inflator.findViewById(R.id.name_marker);
+
+
+
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.layout_markers_fragment, null))
+        builder.setView(inflator)
                 // Add action buttons
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        name = name_text.getText().toString();
+                        name_text = (EditText) inflator.findViewById(R.id.name_marker);
+                        System.out.println("Nombre: "+name_text.getText().toString());
+                        //name_text.setText("Yellow");
+                        mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString());
+
+
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

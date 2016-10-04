@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public List<Address> markersAddress; //Arraylist where are saved the addresses of the result from the search, in this demo it is searching for Jumbo stores
     private List<LatLng> markers; //Arraylist where are save the latitude and the longitude of the elements of the markersAddress array
     public Geocoder geo; //Object to get access to the geolocation
+    private List<String> idMarkers;
     MarkersFragment dialog;
     private  Context context;
     String mess;
@@ -56,6 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         geo = new Geocoder(this);
         markers = new ArrayList<LatLng>();
+        idMarkers = new ArrayList<String>();
+        idMarkers.add("id0");
         context = this;
 
         if (mGoogleApiClient == null) {
@@ -158,8 +162,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                          public boolean onMarkerClick(Marker arg0) {
                                              showNoticeDialog();
                                              try {
-                                                 System.out.print(dialog.name);
-                                                 arg0.setTitle(dialog.name);
+                                                    for(int i=0; i<idMarkers.size(); i++){
+                                                        if(!arg0.getId().equals(idMarkers.get(i))) {
+                                                            arg0.setTitle(mess);
+                                                            idMarkers.add(arg0.getId());
+                                                            Toast.makeText(context, "Your marker: " + arg0.getTitle() + " " + arg0.getId(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        else
+                                                            Toast.makeText(context, "You can not change this name ", Toast.LENGTH_SHORT).show();
+                                                    }
                                              }
                                              catch (Exception e){
                                                  e.printStackTrace();
@@ -229,8 +240,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public boolean onMarkerClick(Marker arg0) {
                             showNoticeDialog();
                             try {
-                                System.out.print(dialog.name);
-                                arg0.setTitle(dialog.name);
+
+                                arg0.setTitle(mess);
                             }
                             catch (Exception e){
                                 e.printStackTrace();
@@ -266,8 +277,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        System.out.println(this.dialog.name);
+    public void onDialogPositiveClick(DialogFragment dialog, String name) {
+        mess = name;
+       // Toast.makeText(context, "Thanks: "+name,
+            //    Toast.LENGTH_LONG).show();
     }
 
 
