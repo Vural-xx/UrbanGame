@@ -176,6 +176,8 @@ public class RoomListActivity extends AppCompatActivity {
             DialogFragment createFragment = new RoomCreateFragment();
             createFragment.show(getSupportFragmentManager(),"RoomListActivity");
 
+        }else if(id == R.id.action_logout){
+            Toast.makeText(this, "Here is the logout", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
