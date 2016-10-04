@@ -355,7 +355,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     //part made without the template
 
-    public void OpenRegisterDialog(){
+    public void OpenRegisterDialog(View view){
         RegisterDialog newFragment = new RegisterDialog();
         newFragment.show(getSupportFragmentManager(), "dialog_register");
     }
