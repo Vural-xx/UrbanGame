@@ -80,7 +80,19 @@ public class RoomCreateFragment extends DialogFragment {
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
-        //etStart.setOnClickListener(onDateClick(etStart.getVie));
+        etStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fromDatePickerDialog.show();
+            }
+        });
+
+        etEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toDatePickerDialog.show();
+            }
+        });
 
 
         // Inflate and set the layout for the dialog
