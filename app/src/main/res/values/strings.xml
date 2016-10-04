@@ -2,7 +2,7 @@
     <string name="app_name">UrbanGame</string>
     <string name="title_room_detail">Room Detail</string>
     <string name="title_activity_settings">Settings</string>
-
+    <string name="facebook_app_id">1712006699124185</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -88,4 +88,23 @@
     <string name="end">End</string>
     <string name="title_activity_maps">Map</string>
     <string name="set_checkpoints">Set Checkpoints</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Register here</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="passwords_unmatching">Both passwords fields must match</string>
+    <string name="fields_unfilled">You have to fill all the fields to proceed</string>
+
+    <string name="accept">accept</string>
 </resources>

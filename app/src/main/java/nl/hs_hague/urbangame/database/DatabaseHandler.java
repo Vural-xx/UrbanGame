@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.hs_hague.urbangame.model.Room;
+import nl.hs_hague.urbangame.model.User;
 
 /**
  * Created by vural on 03.10.16.
@@ -23,6 +24,12 @@ public class DatabaseHandler {
         Map<String,Object> map = new HashMap<String, Object>();
         map.put(room.getName(),room);
         root.child("rooms").updateChildren(map);
+    }
+
+    public void createUser(User user){
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put(user.getUsername(),user);
+        root.child("users").updateChildren(map);
     }
 
 
