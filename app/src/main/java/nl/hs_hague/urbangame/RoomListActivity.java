@@ -34,14 +34,6 @@ import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
 
-/**
- * An activity representing a list of Rooms. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link RoomDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- */
 public class RoomListActivity extends AppCompatActivity {
 
     /**
