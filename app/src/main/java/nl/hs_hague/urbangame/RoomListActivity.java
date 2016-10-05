@@ -86,7 +86,7 @@ public class RoomListActivity extends AppCompatActivity {
                             .commit();
 
                 } else {
-                    // Beim klciken auf das Listenelement wird die neue Activity geöffnet
+                    // By clicking on the listElement the new Activity is getting called
                     Intent intent = new Intent(getApplicationContext(), RoomDetailActivity.class);
                     intent.putExtra(RoomDetailActivity.ARG_ITEM, restaurant);
                     startActivity(intent);
@@ -112,7 +112,7 @@ public class RoomListActivity extends AppCompatActivity {
 
                 while (i.hasNext()){
                     String keyItem = ((DataSnapshot)i.next()).getKey();
-                    if(searchQuery != null &&  !searchQuery.equals("") && keyItem.equals(searchQuery)){
+                    if(searchQuery != null &&  !searchQuery.equals("") &&  keyItem.toLowerCase().contains(searchQuery.toLowerCase())){
                         set.add(new Room(keyItem));
                     }else if(searchQuery == null || searchQuery.equals("")){
                         set.add(new Room(keyItem));
