@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,7 +35,6 @@ import nl.hs_hague.urbangame.adapter.RoomAdapter;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
-import com.facebook.AccessToken;
 public class RoomListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
@@ -47,6 +45,7 @@ public class RoomListActivity extends AppCompatActivity {
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
+    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +95,10 @@ public class RoomListActivity extends AppCompatActivity {
             }
         });
 
+        searchQuery = "";
         Intent searchIntent = getIntent();
         if(Intent.ACTION_SEARCH.equals(searchIntent.getAction())){
-            String query = searchIntent.getStringExtra(SearchManager.QUERY);
-            Toast.makeText(this,query, Toast.LENGTH_SHORT).show();
+            searchQuery = searchIntent.getStringExtra(SearchManager.QUERY);
         }
 
         databaseHandler = new DatabaseHandler();
@@ -113,7 +112,12 @@ public class RoomListActivity extends AppCompatActivity {
                 Iterator i = dataSnapshot.getChildren().iterator();
 
                 while (i.hasNext()){
-                    set.add(new Room(((DataSnapshot)i.next()).getKey()));
+                    String keyItem = ((DataSnapshot)i.next()).getKey();
+                    if(searchQuery != null &&  !searchQuery.equals("") && keyItem.equals(searchQuery)){
+                        set.add(new Room(keyItem));
+                    }else if(searchQuery == null || searchQuery.equals("")){
+                        set.add(new Room(keyItem));
+                    }
                 }
                 rooms.clear();
                 rooms.addAll(set);
