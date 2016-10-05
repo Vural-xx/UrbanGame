@@ -28,7 +28,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import nl.hs_hague.urbangame.adapter.RoomAdapter;
@@ -40,7 +39,7 @@ public class RoomListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private ListView lvRooms;
     private ArrayList<Room> rooms = new ArrayList<Room>();
-    RoomAdapter roomAdapter;
+    private RoomAdapter roomAdapter;
     private Context context = null;
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -147,13 +146,6 @@ public class RoomListActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private List<Room> generateRooms(){
-        List<Room> rooms = new ArrayList<Room>();
-        rooms.add(new Room("Room1"));
-        rooms.add(new Room("Room2"));
-        return rooms;
     }
 
     @Override
