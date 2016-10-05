@@ -13,13 +13,16 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import nl.hs_hague.urbangame.model.Room;
@@ -33,8 +36,12 @@ public class RoomCreateFragment extends DialogFragment {
     EditText etEnd;
     private Context context;
     private Activity activity;
+    private Date startDate;
+    private Date endDate;
     DatePickerDialog fromDatePickerDialog;
     DatePickerDialog toDatePickerDialog;
+    private boolean startTime;
+    SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.US);
 
     @NonNull
     @Override
@@ -42,81 +49,95 @@ public class RoomCreateFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View convertView = inflater.inflate(R.layout.fragment_room_create, null);
+        final View convertView = inflater.inflate(R.layout.fragment_room_create, null);
         etName = (EditText) convertView.findViewById(R.id.create_room_name);
         etStart = (EditText) convertView.findViewById(R.id.create_room_start);
         etEnd = (EditText) convertView.findViewById(R.id.create_room_end);
 
-        //datepicker
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.US);
-        etStart.setText(dateFormatter.format(calendar.getTime()));
+        etStart.setText(dateFormatter.format(Calendar.getInstance().getTime()));
+        startDate = Calendar.getInstance().getTime();
 
         context = this.getContext();
         activity = getActivity();
 
-        Calendar newCalendar = Calendar.getInstance();
-        fromDatePickerDialog = new DatePickerDialog(this.getActivity(), new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-            }
-
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
-        toDatePickerDialog = new DatePickerDialog(this.getActivity(), new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-            }
-
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
         etStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fromDatePickerDialog.show();
+                createDateTimePicker();
+                startTime = true;
+                //fromDatePickerDialog.show();
             }
         });
 
         etEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toDatePickerDialog.show();
+                createDateTimePicker();
+                startTime = false;
+               // toDatePickerDialog.show();
             }
         });
 
+        final AlertDialog d = new AlertDialog.Builder(context)
+                .setView(convertView)
+                .setTitle(R.string.create_room)
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setNegativeButton(android.R.string.cancel, null).create();
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(convertView)
-                // Add action buttons
-                .setPositiveButton(R.string.menu_create, new DialogInterface.OnClickListener() {
+
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Room room = new Room(etName.getText().toString(), new Date(), new Date());
-                        RoomListActivity.databaseHandler.createRoom(room);
-                        getDialog().cancel();
-                        Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
-
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-
+                    public void onClick(View view) {
+                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null){
+                            Room room = new Room(etName.getText().toString(), startDate, endDate);
+                            RoomListActivity.databaseHandler.createRoom(room);
+                            d.dismiss();
+                            Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getContext(),"Please fill out the form", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
-        return builder.create();
+            }
+        });
+        return  d;
 
+    }
+
+    public void createDateTimePicker(){
+        final View dialogView = View.inflate(activity, R.layout.date_time_picker, null);
+        final AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+
+        dialogView.findViewById(R.id.date_time_set).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+                TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker);
+
+                Calendar calendar = new GregorianCalendar(datePicker.getYear(),
+                        datePicker.getMonth(),
+                        datePicker.getDayOfMonth(),
+                        timePicker.getCurrentHour(),
+                        timePicker.getCurrentMinute());
+                if(startTime){
+                    startDate = calendar.getTime();
+                    etStart.setText(dateFormatter.format(calendar.getTime()));
+                }else{
+                    endDate = calendar.getTime();
+                    etEnd.setText(dateFormatter.format(calendar.getTime()));
+                }
+                alertDialog.dismiss();
+            }});
+        alertDialog.setView(dialogView);
+        alertDialog.show();
     }
 
     @Nullable

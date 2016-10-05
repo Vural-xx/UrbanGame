@@ -109,4 +109,6 @@
 
     <string name="accept">accept</string>
     <string name="action_logout">Logout</string>
+    <string name="game_start">Start of Game</string>
+    <string name="game_end">End of Game</string>
 </resources>
