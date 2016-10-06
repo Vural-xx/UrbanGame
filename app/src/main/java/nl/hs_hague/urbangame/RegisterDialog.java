@@ -10,10 +10,19 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.model.User;
 
 public class RegisterDialog extends DialogFragment {
+    private DatabaseHandler db;
+    private FirebaseAuth fbAuth;
+    private FirebaseUser fbUser;
+    private UserProfileChangeRequest fbUPCR;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -26,7 +35,7 @@ public class RegisterDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
-                        EditText etUsername = (EditText)getDialog().findViewById(R.id.editTextLogin);
+                        EditText etUsername = (EditText) getDialog().findViewById(R.id.editTextLogin);
                         EditText etEmail = (EditText) getDialog().findViewById(R.id.editTextEmail);
                         EditText etPass1 = (EditText) getDialog().findViewById(R.id.editTextPass1);
                         EditText etPass2 = (EditText) getDialog().findViewById(R.id.editTextPass2);
@@ -46,9 +55,18 @@ public class RegisterDialog extends DialogFragment {
                                 newUser.setAvatar(null);
                                 newUser.setScore(0);
 
-                                DatabaseHandler db = new DatabaseHandler();
+                                db = new DatabaseHandler();
+                                fbAuth = FirebaseAuth.getInstance();
                                 db.createUser(newUser);
-                                Toast.makeText(getContext(), R.string.passwords_unmatching, Toast.LENGTH_LONG).show();
+                                fbAuth.createUserWithEmailAndPassword(email, pass1);
+                                fbUPCR = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
+                                fbAuth.signInWithEmailAndPassword(email, pass1);
+
+                                fbUser = fbAuth.getCurrentUser();
+                                //fbUser.updateProfile(fbUPCR);
+                                //fbUser = fbAuth.getCurrentUser();
+
+                                Toast.makeText(getContext(), (fbUser.getDisplayName() + " registered"), Toast.LENGTH_LONG).show();
                             }
 
                             else{
