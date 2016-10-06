@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -169,10 +170,23 @@ public class RoomListActivity extends AppCompatActivity {
             createFragment.show(getSupportFragmentManager(),"RoomListActivity");
 
         }else if(id == R.id.action_logout){
-            LoginManager.getInstance().logOut();//log out facebook
             SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor=preferences.edit();
             editor.putBoolean("Login",false).apply();
+
+            Boolean login_face=preferences.getBoolean("Login_face",false);
+            Boolean login_fire=preferences.getBoolean("Login_fire",false);
+            if(login_face)
+            {
+                LoginManager.getInstance().logOut();//log out facebook
+                editor.putBoolean("Login_face",false).apply();
+            }
+
+            if(login_fire)
+            {
+                FirebaseAuth.getInstance().signOut();//log out from firebase
+                editor.putBoolean("Login_fire",false).apply();
+            }
             goLogin();
         }
         return super.onOptionsItemSelected(item);

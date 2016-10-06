@@ -3,21 +3,30 @@ package nl.hs_hague.urbangame;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.appevents.internal.Constants;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
 
     private LoginButton loginButton;
     private CallbackManager callbackManager;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,7 @@ public class Login extends AppCompatActivity {
                 SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putBoolean("Login",true).apply();
+                editor.putBoolean("Login_face",true).apply();
                 goRoomActivity();
             }
 
@@ -46,8 +56,39 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Error: something went wrong",Toast.LENGTH_SHORT).show();
             }
         });
-        /////////////////////////////////////////////
+        ///////////////////////////Listener Login (Normal)
+        Button button = (Button) findViewById(R.id.login_button);
+        final EditText emailBox = (EditText) findViewById(R.id.editmail) ;
+        final EditText passwordBox = (EditText) findViewById(R.id.editPass) ;
+        mAuth = FirebaseAuth.getInstance();
+
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onLogin(emailBox.getText().toString(),passwordBox.getText().toString());
+            }
+        });
+        ////////
     }//on create
+
+    private void onLogin(String mail,String pass) {
+        if(mail.equals("")||pass.equals(""))//empty fields
+            Toast.makeText(this, "You must fill both fields", Toast.LENGTH_SHORT).show();
+        else {
+                  mAuth.signInWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                      @Override
+                      public void onComplete(@NonNull Task<AuthResult> task) {
+                          if(!task.isSuccessful()){
+                              Toast.makeText(Login.this, "Unsuccesful login", Toast.LENGTH_SHORT).show();
+                          }
+                          else{SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                              SharedPreferences.Editor editor=preferences.edit();
+                              editor.putBoolean("Login",true).apply();
+                              editor.putBoolean("Login_fire",true).apply();
+                              goRoomActivity();}
+                      }
+                  });
+        }
+    }
 
     private void goRoomActivity() {
         Intent intent= new Intent(this, RoomListActivity.class);

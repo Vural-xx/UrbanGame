@@ -68,6 +68,8 @@ public class Welcome_Screen extends Activity {
                     }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     Boolean login=preferences.getBoolean("Login",false);
+                    Boolean login_face=preferences.getBoolean("Login_face",false);
+                    Boolean login_fire=preferences.getBoolean("Login_fire",false);
                     if (!login)
                     {
                     Intent intent = new Intent(Welcome_Screen.this,
