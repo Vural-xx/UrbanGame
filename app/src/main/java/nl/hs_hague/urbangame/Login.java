@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -59,6 +60,12 @@ public class Login extends AppCompatActivity {
     {
         super.onActivityResult(requestCode,resultCode,data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
+    }
+
+
+    public void OpenRegisterDialog(View view){
+        RegisterDialog newFragment = new RegisterDialog();
+        newFragment.show(getSupportFragmentManager(), "dialog_register");
     }
 
 }
