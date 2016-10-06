@@ -7,9 +7,14 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
 
+    <item android:id="@+id/menu_profile"
+        android:title="@string/profile"
+        android:orderInCategory="110"
+        app:showAsAction="never"/>
+
     <item android:id="@+id/action_logout"
         android:title="@string/action_logout"
-        android:orderInCategory="100"
+        android:orderInCategory="120"
         app:showAsAction="never" />
 
     <item android:id="@+id/menu_search"
@@ -22,6 +27,8 @@
         android:title="@string/menu_create"
         android:icon="@drawable/ic_action_create"
         app:showAsAction="ifRoom" />
+
+
 
 
 </menu>

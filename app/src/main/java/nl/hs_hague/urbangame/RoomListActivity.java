@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -188,6 +189,8 @@ public class RoomListActivity extends AppCompatActivity {
                 editor.putBoolean("Login_fire",false).apply();
             }
             goLogin();
+        } else if(id == R.id.menu_profile){
+            Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
