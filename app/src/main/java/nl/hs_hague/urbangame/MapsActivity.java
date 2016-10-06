@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -42,9 +44,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public List<Address> markersAddress; //Arraylist where are saved the addresses of the result from the search, in this demo it is searching for Jumbo stores
     private List<LatLng> markers; //Arraylist where are save the latitude and the longitude of the elements of the markersAddress array
     public Geocoder geo; //Object to get access to the geolocation
-    private List<String> idMarkers;
+    private List<Marker> idMarkers;
     MarkersFragment dialog;
     private  Context context;
+    private final int maxMarkers = 10;
+    private int counterMarkers;
     String mess;
 
     /*Initializing the map*/
@@ -58,9 +62,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         geo = new Geocoder(this);
         markers = new ArrayList<LatLng>();
-        idMarkers = new ArrayList<String>();
-        idMarkers.add("id0");
+        idMarkers = new ArrayList<Marker>();
+       counterMarkers=0;
         context = this;
+        Button doneButton = (Button) findViewById(R.id.doneButton);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*You can get the markers with the getMarkers method
+                 It returns a List of addresses, in order to get the name of the marker just use the method getTitle()
+                 In order to get the coordenates use the method getPosition and it returns a LatLng object and you can get the coordenates with that object
+                 with the methods getLatitude() and getLongitude
+
+                 */
+            }
+        });
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -128,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         cLocation = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()); //Getting the coordenates
-        mMap.addMarker(new MarkerOptions().position(cLocation).title("Marker in Den Haag")); //Adding a new marker in our current location
+       // mMap.addMarker(new MarkerOptions().position(cLocation).title("Marker in Den Haag")); //Adding a new marker in our current location
         mMap.moveCamera(CameraUpdateFactory.newLatLng(cLocation)); //Moving the camera to our current location
         mMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
         if (mLastLocation != null) {
@@ -155,31 +171,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                              markersAddress = geo.getFromLocation(cLocation.latitude,cLocation.longitude,2);
                              cLocality = markersAddress.get(0).getLocality();
 
-                             if(cLocality.equals(mLocality)){
+                             if(cLocality.equals(mLocality)) {
+                                 if (counterMarkers < maxMarkers) {
                                      mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
-                                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                                     counterMarkers++;
+                                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                          @Override
                                          public boolean onMarkerClick(Marker arg0) {
                                              showNoticeDialog();
+                                             int i = 0;
                                              try {
-                                                    for(int i=0; i<idMarkers.size(); i++){
-                                                        if(!arg0.getId().equals(idMarkers.get(i))) {
-                                                            arg0.setTitle(mess);
-                                                            idMarkers.add(arg0.getId());
-                                                            Toast.makeText(context, "Your marker: " + arg0.getTitle() + " " + arg0.getId(), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                        else
-                                                            Toast.makeText(context, "You can not change this name ", Toast.LENGTH_SHORT).show();
-                                                    }
-                                             }
-                                             catch (Exception e){
+
+                                                 if (idMarkers.isEmpty() == true) {
+                                                     idMarkers.add(arg0);
+
+                                                 }
+                                                 do {
+                                                     if (arg0.equals(idMarkers.get(i))) {
+                                                         if (!mess.equals(""))
+                                                             idMarkers.get(i).setTitle(mess);
+
+                                                         Toast.makeText(context, "Your marker: " + idMarkers.get(i).getTitle() + " " + idMarkers.get(i).getId(), Toast.LENGTH_SHORT).show();
+                                                         mess = "";
+                                                         break;
+                                                     }
+                                                     i++;
+                                                 } while (i < idMarkers.size());
+                                                 if (i == idMarkers.size()) {
+                                                     idMarkers.add(arg0);
+                                                     if (!mess.equals(""))
+                                                         idMarkers.get(i + 1).setTitle(mess);
+
+                                                     Toast.makeText(context, "Your marker: " + idMarkers.get(i + 1).getTitle() + " " + idMarkers.get(i + 1).getId(), Toast.LENGTH_SHORT).show();
+                                                     mess = "";
+                                                 }
+                                             } catch (Exception e) {
                                                  e.printStackTrace();
                                              }
                                              return true;
                                          }
                                      });
-                                 for (int i = 0; i < markers.size(); i++)
-                                     System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
+                                     for (int i = 0; i < markers.size(); i++)
+                                         System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
+                                 }
+                                 else{
+                                     Toast.makeText(context,"You can not add more markers", Toast.LENGTH_SHORT).show();
+                                 }
                              }
                              else{
                                  Toast.makeText(context,"You can not add marker out of your current city", Toast.LENGTH_SHORT).show();
@@ -267,10 +304,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String success = "You have reached a checkpoint";
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Toast.makeText(this, success+" time: "+mLastUpdateTime,
+        Toast.makeText(this, success+" time: ",
                 Toast.LENGTH_LONG).show();
-        for(int i=0; i<markers.size();i++){
-            if((mCurrentLocation.getLatitude() == markers.get(i).latitude) && (mCurrentLocation.getLongitude() == markers.get(i).longitude))
+        for(int i=0; i<idMarkers.size();i++){
+            if((mCurrentLocation.getLatitude() == idMarkers.get(i).getPosition().latitude) && (mCurrentLocation.getLongitude() == idMarkers.get(i).getPosition().longitude))
                 Toast.makeText(this, success+" time: "+mLastUpdateTime,
                         Toast.LENGTH_LONG).show();
         }
@@ -279,9 +316,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String name) {
         mess = name;
-       // Toast.makeText(context, "Thanks: "+name,
-            //    Toast.LENGTH_LONG).show();
     }
-
+    public List<Address> getMarkers(){
+        return markersAddress;
+    }
 
 }
