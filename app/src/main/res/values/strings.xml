@@ -114,4 +114,5 @@
     <string name="game_end">End of Game</string>
     <string name="auth_failed">auth failed</string>
     <string name="profile">Profile</string>
+    <string name="profile_updated"></string>
 </resources>

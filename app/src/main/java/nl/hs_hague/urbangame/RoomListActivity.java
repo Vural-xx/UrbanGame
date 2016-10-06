@@ -190,7 +190,9 @@ public class RoomListActivity extends AppCompatActivity {
             }
             goLogin();
         } else if(id == R.id.menu_profile){
-            Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, UserSettingsActivity.class);
+            startActivity(intent);
+            //Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
