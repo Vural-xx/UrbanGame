@@ -134,7 +134,7 @@ public class RoomListActivity extends AppCompatActivity {
     }
 
     private void goLogin() {
-        Intent intent= new Intent(this, LoginActivity.class);
+        Intent intent= new Intent(this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

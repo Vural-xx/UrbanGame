@@ -71,7 +71,7 @@ public class Welcome_Screen extends Activity {
                     if (!login)
                     {
                     Intent intent = new Intent(Welcome_Screen.this,
-                            LoginActivity.class);
+                            Login.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(intent);
                     Welcome_Screen.this.finish();
