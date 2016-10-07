@@ -14,7 +14,7 @@
     master/detail flow.
 
     -->
-    <ListView
+    <ExpandableListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/lvRooms"
         android:layout_width="@dimen/item_width"
