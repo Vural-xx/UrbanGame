@@ -243,16 +243,8 @@ public class RoomListActivity extends AppCompatActivity {
     public void prepareListData(){
         roomsHeader = new ArrayList<String>();
         rooms = new HashMap<String, List<Room>>();
-
-        List<Room> top250 = new ArrayList<Room>();
-        top250.add(new Room("Hello"));
-        top250.add(new Room("Test"));
-        // Adding child data
         roomsHeader.add("Rooms");
         roomsHeader.add("Own Rooms");
-       // rooms.put(roomsHeader.get(0), top250);
-
-
     }
 
 
