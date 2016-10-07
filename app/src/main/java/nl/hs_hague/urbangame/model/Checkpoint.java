@@ -41,4 +41,5 @@ public class Checkpoint {
     public void setHint(String hint) {
         this.hint = hint;
     }
+
 }

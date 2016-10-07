@@ -212,13 +212,6 @@ public class RoomListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClick(View view){
-        if(view.getId() == R.id.btnSetCheckpoints){
-            Intent intent = new Intent(this, MapsActivity.class);
-            startActivity(intent);
-        }
-    }
-
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from

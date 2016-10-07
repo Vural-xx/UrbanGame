@@ -1,10 +1,10 @@
 package nl.hs_hague.urbangame;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,23 +25,27 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import nl.hs_hague.urbangame.model.MarkerHolder;
 import nl.hs_hague.urbangame.model.Room;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Fragment to create a Room.
  */
 public class RoomCreateFragment extends DialogFragment {
-    EditText etName;
-    EditText etStart;
-    EditText etEnd;
+    private EditText etName;
+    private EditText etStart;
+    private EditText etEnd;
+    private Button btnSetCheckpoints;
     private Context context;
     private Activity activity;
     private Date startDate;
     private Date endDate;
-    DatePickerDialog fromDatePickerDialog;
-    DatePickerDialog toDatePickerDialog;
     private boolean startTime;
     SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.US);
+    public static final int GET_MARKERS_REQUEST = 1;  // The request code
+    public static final String MARKER = "marker";
 
     @NonNull
     @Override
@@ -53,6 +57,8 @@ public class RoomCreateFragment extends DialogFragment {
         etName = (EditText) convertView.findViewById(R.id.create_room_name);
         etStart = (EditText) convertView.findViewById(R.id.create_room_start);
         etEnd = (EditText) convertView.findViewById(R.id.create_room_end);
+        btnSetCheckpoints = (Button) convertView.findViewById(R.id.btnSetCheckpoints);
+
 
         etStart.setText(dateFormatter.format(Calendar.getInstance().getTime()));
         startDate = Calendar.getInstance().getTime();
@@ -75,6 +81,14 @@ public class RoomCreateFragment extends DialogFragment {
                 createDateTimePicker();
                 startTime = false;
                // toDatePickerDialog.show();
+            }
+        });
+
+        btnSetCheckpoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MapsActivity.class);
+                startActivityForResult(intent, GET_MARKERS_REQUEST);
             }
         });
 
@@ -144,8 +158,17 @@ public class RoomCreateFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().setTitle(R.string.create_room);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return super.onCreateView(inflater,container,savedInstanceState);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GET_MARKERS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                MarkerHolder markerHolder = (MarkerHolder) data.getSerializableExtra(MARKER);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
 }

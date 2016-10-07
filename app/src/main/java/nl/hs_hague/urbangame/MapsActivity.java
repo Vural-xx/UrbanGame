@@ -2,6 +2,7 @@ package nl.hs_hague.urbangame;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -33,6 +34,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.hs_hague.urbangame.model.Checkpoint;
+import nl.hs_hague.urbangame.model.CustomMarker;
+import nl.hs_hague.urbangame.model.MarkerHolder;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener {
 
     private GoogleMap mMap; //The map that we will show
@@ -60,7 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         geo = new Geocoder(this);
@@ -78,6 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                  with the methods getLatitude() and getLongitude
 
                  */
+                retrieveMarkers();
             }
         });
 
@@ -350,6 +356,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Request location updates
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, this);
+    }
+
+    private void retrieveMarkers(){
+        Intent intent = this.getIntent();
+        Checkpoint checkpoint = new Checkpoint();
+        MarkerHolder markerHolder = new MarkerHolder();
+        markerHolder.setMarkers(new ArrayList<CustomMarker>());
+        for (int i = 0; i < idMarkers.size(); i++){
+            CustomMarker customMarker = new CustomMarker(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
+            markerHolder.getMarkers().add(customMarker);
+        };
+        intent.putExtra(RoomCreateFragment.MARKER, markerHolder);
+        MapsActivity mapsActivity = (MapsActivity) context;
+        this.setResult(RESULT_OK, intent);
+        finish();
     }
 
 
