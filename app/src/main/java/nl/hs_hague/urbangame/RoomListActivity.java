@@ -15,9 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ExpandableListView;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,20 +26,24 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import nl.hs_hague.urbangame.adapter.RoomAdapter;
+import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
+
 public class RoomListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
-    private ListView lvRooms;
-    private ArrayList<Room> rooms = new ArrayList<Room>();
-    private RoomAdapter roomAdapter;
+    ExpandableRoomAdapter roomAdapter;
+    ExpandableListView lvRooms;
+    List<String> roomsHeader;
+    HashMap<String, List<Room>> rooms;
     private Context context = null;
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -68,33 +70,13 @@ public class RoomListActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        lvRooms = (ListView) findViewById(R.id.lvRooms);
-        roomAdapter = new RoomAdapter(this, R.layout.room_list_content, rooms);
-        lvRooms.setAdapter(roomAdapter);
-        context = this;
+        // get the listview
+        lvRooms = (ExpandableListView) findViewById(R.id.lvRooms);
 
-        lvRooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Room restaurant = (Room) parent.getItemAtPosition(position);
-                if (mTwoPane) {
-                    RoomDetailFragment fragment = new RoomDetailFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(RoomDetailFragment.ARG_ITEM,restaurant);
-                    fragment.setArguments(bundle);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.room_detail_container, fragment)
-                            .commit();
+        // preparing list data
+        prepareListData();
 
-                } else {
-                    // By clicking on the listElement the new Activity is getting called
-                    Intent intent = new Intent(getApplicationContext(), RoomDetailActivity.class);
-                    intent.putExtra(RoomDetailActivity.ARG_ITEM, restaurant);
-                    startActivity(intent);
-                }
-            }
-        });
+        databaseHandler = new DatabaseHandler();
 
         searchQuery = "";
         Intent searchIntent = getIntent();
@@ -102,8 +84,10 @@ public class RoomListActivity extends AppCompatActivity {
             searchQuery = searchIntent.getStringExtra(SearchManager.QUERY);
         }
 
-        databaseHandler = new DatabaseHandler();
 
+        roomAdapter = new ExpandableRoomAdapter(this, roomsHeader, rooms);
+        // setting list adapter
+        lvRooms.setAdapter(roomAdapter);
 
         databaseHandler.getRoot().child("rooms").addValueEventListener(new ValueEventListener() {
             @Override
@@ -120,9 +104,9 @@ public class RoomListActivity extends AppCompatActivity {
                         set.add(new Room(keyItem));
                     }
                 }
-                rooms.clear();
-                rooms.addAll(set);
-                roomAdapter.notifyDataSetChanged();
+                rooms.put(roomsHeader.get(0), new ArrayList<Room>(set));
+                roomAdapter.updateRooms(new ArrayList<Room>(set),0);
+                lvRooms.expandGroup(0);
             }
 
             @Override
@@ -130,7 +114,38 @@ public class RoomListActivity extends AppCompatActivity {
 
             }
         });
+        context = this;
 
+
+        lvRooms.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                return false;
+            }
+        });
+
+        lvRooms.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Room currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(childPosition);
+                if (mTwoPane) {
+                    RoomDetailFragment fragment = new RoomDetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(RoomDetailFragment.ARG_ITEM,currentRoom);
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.room_detail_container, fragment)
+                            .commit();
+
+                } else {
+                    // By clicking on the listElement the new Activity is getting called
+                    Intent intent = new Intent(getApplicationContext(), RoomDetailActivity.class);
+                    intent.putExtra(RoomDetailActivity.ARG_ITEM, currentRoom);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
 
 
     }
@@ -223,6 +238,21 @@ public class RoomListActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public void prepareListData(){
+        roomsHeader = new ArrayList<String>();
+        rooms = new HashMap<String, List<Room>>();
+
+        List<Room> top250 = new ArrayList<Room>();
+        top250.add(new Room("Hello"));
+        top250.add(new Room("Test"));
+        // Adding child data
+        roomsHeader.add("Rooms");
+        roomsHeader.add("Own Rooms");
+       // rooms.put(roomsHeader.get(0), top250);
+
+
     }
 
 
