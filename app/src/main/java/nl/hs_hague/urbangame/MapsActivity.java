@@ -88,8 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .addApi(LocationServices.API)
                     .build();
         }
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
 
@@ -315,10 +313,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return markersAddress;
     }
 
-    //------------------------------------------------------------------------------
-    //ref: Requesting Permissions at Run Time
-    //http://developer.android.com/training/permissions/requesting.html
-    //------------------------------------------------------------------------------
     private void getPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -354,7 +348,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL);
         // Request location updates
-
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, this);
     }
