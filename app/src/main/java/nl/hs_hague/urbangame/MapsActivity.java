@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +39,7 @@ import java.util.List;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CheckpointHolder;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener, Serializable {
 
     private GoogleMap mMap; //The map that we will show
     private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
@@ -49,12 +51,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Geocoder geo; //Object to get access to the geolocation
     private List<Marker> idMarkers;
     MarkersFragment dialog;
+    private int checkCounter=0;
     private Context context;
     private final int maxMarkers = 10;
     private int counterMarkers;
     String mess;
     LocationRequest locationRequest;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static final String SAVED_GAME = "savedGame";
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
@@ -67,31 +71,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        geo = new Geocoder(this);
-        markers = new ArrayList<LatLng>();
-        idMarkers = new ArrayList<Marker>();
-        counterMarkers = 0;
-        context = this;
-        Button doneButton = (Button) findViewById(R.id.doneButton);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*You can get the markers with the getMarkers method
-                 It returns a List of addresses, in order to get the name of the marker just use the method getTitle()
-                 In order to get the coordenates use the method getPosition and it returns a LatLng object and you can get the coordenates with that object
-                 with the methods getLatitude() and getLongitude
 
-                 */
-                retrieveMarkers();
+        if (savedInstanceState != null) {
+            MapsActivity game = (MapsActivity) savedInstanceState.get(SAVED_GAME);
+            idMarkers = game.getidMarkers();
+            context = game.getContext();
+            checkCounter = game.getCheckCounter();
+            cLocation = game.getcLocation();
+            resAddress = game.getResAddress();
+            markersAddress = game.getMarkersAddress();
+            markers = game.getMarkersList();
+            geo = game.getGeo();
+            counterMarkers = game.getCounterMarkers();
+            mMap = game.getmMap();
+            mGoogleApiClient = game.getmGoogleApiClient();
+            mess = game.getMess();
+
+            for(int i=0; i<idMarkers.size(); i++){
+                System.out.println("Restaurando marcadores");
+                System.out.println("Marcadores: "+counterMarkers);
+                System.out.println("Coordenadas: "+idMarkers.get(i).getPosition());
+                mMap.addMarker(new MarkerOptions().position(idMarkers.get(i).getPosition()).title(idMarkers.get(i).getTitle()));
             }
-        });
 
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        }else {
+                    geo = new Geocoder(this);
+                    markers = new ArrayList<LatLng>();
+                    idMarkers = new ArrayList<Marker>();
+                    counterMarkers = 0;
+                    context = this;
+                    Button doneButton = (Button) findViewById(R.id.doneButton);
+                    doneButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                        /*You can get the markers with the getMarkers method
+                         It returns a List of addresses, in order to get the name of the marker just use the method getTitle()
+                         In order to get the coordenates use the method getPosition and it returns a LatLng object and you can get the coordenates with that object
+                         with the methods getLatitude() and getLongitude
+
+                         */
+                            retrieveMarkers();
+                        }
+                    });
+
+                    if (mGoogleApiClient == null) {
+                        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                                .addConnectionCallbacks(this)
+                                .addOnConnectionFailedListener(this)
+                                .addApi(LocationServices.API)
+                                .build();
+                    }
         }
     }
 
@@ -139,6 +168,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient); //Getting the current location
 
+        android.location.LocationListener listener = new android.location.LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                Location mCurrentLocation = location;
+
+
+                String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+                if(checkCounter<idMarkers.size()) {
+                    if ((mCurrentLocation.getLatitude() == idMarkers.get(checkCounter).getPosition().latitude) && (mCurrentLocation.getLongitude() == idMarkers.get(checkCounter).getPosition().longitude))
+                    {
+                        Toast.makeText(context,"You reached a checkpoint counter: "+checkCounter,Toast.LENGTH_SHORT).show();
+                        checkCounter++;
+                    }
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,5,listener);
+
 
         if (mLastLocation != null) {
             cLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //Getting the coordenates
@@ -159,6 +223,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         int index = 0;
                         String cLocality, mLocality;
                         markers.add(latLng);
+
                         index = markers.size();
                         try {
                             //Getting the locality of the potential marker
@@ -197,9 +262,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 if (i == idMarkers.size()) {
                                                     idMarkers.add(arg0);
                                                     if (!mess.equals(""))
-                                                        idMarkers.get(i + 1).setTitle(mess);
+                                                        idMarkers.get(i).setTitle(mess);
 
-                                                    Toast.makeText(context, "Your marker: " + idMarkers.get(i + 1).getTitle() + " " + idMarkers.get(i + 1).getId(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Your marker: " + idMarkers.get(i).getTitle() + " " + idMarkers.get(i).getId(), Toast.LENGTH_SHORT).show();
                                                     mess = "";
                                                 }
                                             } catch (Exception e) {
@@ -244,14 +309,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void addMarkers(String place, String locality) {
+   /* public void addMarkers(String place, String locality) {
         double latitude, longitude;
         try {
 
             markersAddress = geo.getFromLocationName(place + locality, 10); //Ypu have to define how many results you want, in this case they are only 10
             mess = "Your coordenates are:";
-            //  sydney = new LatLng(52.067197,4.324365);
-            // markers.add(sydney);
 
             try {
 
@@ -288,25 +351,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
-
+*/
     /*I have not tried this method yet but it is supposed to compare your current location with all the coordenates that are saverd as a marker*/
     @Override
     public void onLocationChanged(Location location) {
-        Location mCurrentLocation = location;
+        /*Location mCurrentLocation = location;
         String success = "You have reached a checkpoint";
         cLocation = new LatLng(location.getLatitude(), location.getLongitude()); //Getting the coordenates
-        // mMap.addMarker(new MarkerOptions().position(cLocation).title("Marker in Den Haag")); //Adding a new marker in our current location
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(cLocation)); //Moving the camera to our current location
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
+
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(cLocation)); //Moving the camera to our current location
+       // mMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Toast.makeText(this, success + " time: ",
-                Toast.LENGTH_LONG).show();
         for (int i = 0; i < idMarkers.size(); i++) {
             if ((mCurrentLocation.getLatitude() == idMarkers.get(i).getPosition().latitude) && (mCurrentLocation.getLongitude() == idMarkers.get(i).getPosition().longitude))
                 Toast.makeText(this, success + " time: " + mLastUpdateTime,
                         Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     @Override
@@ -370,5 +431,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         finish();
     }
 
-
+    public List<Address> getMarkersAddress(){
+        return markersAddress;
+    }
+    public List<Marker> getidMarkers(){
+        return idMarkers;
+    }
+    public Context getContext(){
+        return context;
+    }
+    public LatLng getcLocation(){
+        return cLocation;
+    }
+    public List<Address> getResAddress(){
+        return resAddress;
+    }
+    public List<LatLng> getMarkersList(){
+        return markers;
+    }
+    public Geocoder getGeo(){
+        return geo;
+    }
+    public int getCounterMarkers(){
+        return counterMarkers;
+    }
+    public GoogleMap getmMap(){
+        return mMap;
+    }
+    public GoogleApiClient getmGoogleApiClient(){
+        return mGoogleApiClient;
+    }
+    public String getMess(){
+        return mess;
+    }
+    public int getCheckCounter(){
+        return checkCounter;
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putSerializable(SAVED_GAME, MapsActivity.this);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
 }
