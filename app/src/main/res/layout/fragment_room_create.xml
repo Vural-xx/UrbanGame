@@ -55,7 +55,8 @@
     <ListView
         android:id="@+id/lvCreatedMarkers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"></ListView>
 
     <LinearLayout
         android:layout_width="match_parent"

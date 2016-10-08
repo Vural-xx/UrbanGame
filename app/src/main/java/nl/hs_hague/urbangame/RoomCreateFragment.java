@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import nl.hs_hague.urbangame.adapter.CheckpointAdapter;
@@ -52,6 +53,7 @@ public class RoomCreateFragment extends DialogFragment {
     SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.US);
     public static final int GET_MARKERS_REQUEST = 1;  // The request code
     public static final String MARKER = "marker";
+    private List<Checkpoint> checkpoints;
 
     @NonNull
     @Override
@@ -120,6 +122,7 @@ public class RoomCreateFragment extends DialogFragment {
                     public void onClick(View view) {
                         if(!etName.getText().toString().equals("") && startDate != null && endDate != null){
                             Room room = new Room(etName.getText().toString(), startDate, endDate);
+                            room.setCheckpoints(checkpoints);
                             RoomListActivity.databaseHandler.createRoom(room);
                             d.dismiss();
                             Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
@@ -181,6 +184,7 @@ public class RoomCreateFragment extends DialogFragment {
                 checkpointAdapter.clear();
                 checkpointAdapter.addAll(checkpointHolder.getCheckpoints());
                 checkpointAdapter.notifyDataSetChanged();
+                checkpoints = checkpointHolder.getCheckpoints();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -37,7 +37,7 @@ public class CheckpointAdapter extends ArrayAdapter<Checkpoint> {
         }
         TextView tvRoomName = (TextView) convertView.findViewById(R.id.markerTitle);
         final Checkpoint checkpoint = (Checkpoint) checkpoints.get(position);
-        tvRoomName.setText(checkpoint.getName() + "(" + checkpoint.getLatitude() +", "+ checkpoint.getLatitude() + ")");
+        tvRoomName.setText(checkpoint.getName() + " Hint: " + checkpoint.getHint());
         notifyDataSetChanged();
         return convertView;
     }

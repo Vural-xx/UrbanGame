@@ -3,26 +3,24 @@ package nl.hs_hague.urbangame;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
 
 public class MarkersFragment extends DialogFragment {
     String name;
     EditText name_text;
+    EditText hint;
 
 
     public interface MakersFragmentListener {
-        public void onDialogPositiveClick(DialogFragment dialog, String name);
+        public void onDialogPositiveClick(DialogFragment dialog, String name, String hint);
     }
+
 
     MakersFragmentListener mListener;
     @Override
@@ -44,9 +42,10 @@ public class MarkersFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         name_text = (EditText) inflator.findViewById(R.id.name_marker);
+                        hint = (EditText) inflator.findViewById(R.id.hint_marker);
                         System.out.println("Nombre: "+name_text.getText().toString());
                         //name_text.setText("Yellow");
-                        mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString());
+                        mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString(), hint.getText().toString());
 
 
                     }

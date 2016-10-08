@@ -56,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int maxMarkers = 10;
     private int counterMarkers;
     String mess;
+    private List<String> hints = new ArrayList<String>(10);
     LocationRequest locationRequest;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final String SAVED_GAME = "savedGame";
@@ -371,8 +372,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String name) {
+    public void onDialogPositiveClick(DialogFragment dialog, String name, String hint) {
         mess = name;
+        hints.add(hint);
     }
 
     public List<Address> getMarkers() {
@@ -424,6 +426,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkpointHolder.setCheckpoints(new ArrayList<Checkpoint>());
         for (int i = 0; i < idMarkers.size(); i++){
             Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
+            checkpoint.setHint(hints.get(i));
             checkpointHolder.getCheckpoints().add(checkpoint);
         };
         intent.putExtra(RoomCreateFragment.MARKER, checkpointHolder);
