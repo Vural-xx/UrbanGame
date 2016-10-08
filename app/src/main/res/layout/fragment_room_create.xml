@@ -51,6 +51,12 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+
+    <ListView
+        android:id="@+id/lvCreatedMarkers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -60,5 +66,7 @@
             android:layout_height="wrap_content"
             android:text="@string/set_checkpoints" />
     </LinearLayout>
+
+
 
 </LinearLayout>

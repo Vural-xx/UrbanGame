@@ -35,8 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 import nl.hs_hague.urbangame.model.Checkpoint;
-import nl.hs_hague.urbangame.model.CustomMarker;
-import nl.hs_hague.urbangame.model.MarkerHolder;
+import nl.hs_hague.urbangame.model.CheckpointHolder;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener {
 
@@ -360,15 +359,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void retrieveMarkers(){
         Intent intent = this.getIntent();
-        Checkpoint checkpoint = new Checkpoint();
-        MarkerHolder markerHolder = new MarkerHolder();
-        markerHolder.setMarkers(new ArrayList<CustomMarker>());
+        CheckpointHolder checkpointHolder = new CheckpointHolder();
+        checkpointHolder.setCheckpoints(new ArrayList<Checkpoint>());
         for (int i = 0; i < idMarkers.size(); i++){
-            CustomMarker customMarker = new CustomMarker(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
-            markerHolder.getMarkers().add(customMarker);
+            Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
+            checkpointHolder.getCheckpoints().add(checkpoint);
         };
-        intent.putExtra(RoomCreateFragment.MARKER, markerHolder);
-        MapsActivity mapsActivity = (MapsActivity) context;
+        intent.putExtra(RoomCreateFragment.MARKER, checkpointHolder);
         this.setResult(RESULT_OK, intent);
         finish();
     }

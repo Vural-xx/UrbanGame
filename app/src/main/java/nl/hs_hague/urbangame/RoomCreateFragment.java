@@ -16,16 +16,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import nl.hs_hague.urbangame.model.MarkerHolder;
+import nl.hs_hague.urbangame.adapter.CheckpointAdapter;
+import nl.hs_hague.urbangame.model.Checkpoint;
+import nl.hs_hague.urbangame.model.CheckpointHolder;
 import nl.hs_hague.urbangame.model.Room;
 
 import static android.app.Activity.RESULT_OK;
@@ -38,6 +42,8 @@ public class RoomCreateFragment extends DialogFragment {
     private EditText etStart;
     private EditText etEnd;
     private Button btnSetCheckpoints;
+    private ListView lvMarkers;
+    private CheckpointAdapter checkpointAdapter;
     private Context context;
     private Activity activity;
     private Date startDate;
@@ -58,6 +64,9 @@ public class RoomCreateFragment extends DialogFragment {
         etStart = (EditText) convertView.findViewById(R.id.create_room_start);
         etEnd = (EditText) convertView.findViewById(R.id.create_room_end);
         btnSetCheckpoints = (Button) convertView.findViewById(R.id.btnSetCheckpoints);
+        lvMarkers = (ListView) convertView.findViewById(R.id.lvCreatedMarkers);
+        checkpointAdapter = new CheckpointAdapter(getContext(),R.layout.marker_list_content, new ArrayList<Checkpoint>());
+        lvMarkers.setAdapter(checkpointAdapter);
 
 
         etStart.setText(dateFormatter.format(Calendar.getInstance().getTime()));
@@ -165,7 +174,13 @@ public class RoomCreateFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GET_MARKERS_REQUEST) {
             if (resultCode == RESULT_OK) {
-                MarkerHolder markerHolder = (MarkerHolder) data.getSerializableExtra(MARKER);
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                ViewGroup header = (ViewGroup)inflater.inflate(R.layout.marker_list_header, lvMarkers, false);
+                lvMarkers.addHeaderView(header, null, false);
+                CheckpointHolder checkpointHolder = (CheckpointHolder) data.getSerializableExtra(MARKER);
+                checkpointAdapter.clear();
+                checkpointAdapter.addAll(checkpointHolder.getCheckpoints());
+                checkpointAdapter.notifyDataSetChanged();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
