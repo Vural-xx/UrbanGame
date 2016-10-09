@@ -120,4 +120,6 @@
     <string name="name_label">Name:</string>
     <string name="description_label">Description:</string>
     <string name="join_room">Join Room</string>
+    <string name="user_photo_uploaded">picture uploaded</string>
+    <string name="user_photo_upload_fail">failed to upload a photo</string>
 </resources>
