@@ -58,6 +58,7 @@ public class RoomDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (currentRoom != null) {
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
+            ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
         }
 
         return rootView;

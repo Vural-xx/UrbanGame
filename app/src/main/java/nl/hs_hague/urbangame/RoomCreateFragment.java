@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -40,8 +41,11 @@ import static android.app.Activity.RESULT_OK;
  */
 public class RoomCreateFragment extends DialogFragment {
     private EditText etName;
+    private EditText etDescription;
     private EditText etStart;
     private EditText etEnd;
+    private ImageView etStartCal;
+    private ImageView etEndCal;
     private Button btnSetCheckpoints;
     private ListView lvMarkers;
     private CheckpointAdapter checkpointAdapter;
@@ -63,8 +67,11 @@ public class RoomCreateFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View convertView = inflater.inflate(R.layout.fragment_room_create, null);
         etName = (EditText) convertView.findViewById(R.id.create_room_name);
+        etDescription = (EditText) convertView.findViewById(R.id.create_room_description);
         etStart = (EditText) convertView.findViewById(R.id.create_room_start);
         etEnd = (EditText) convertView.findViewById(R.id.create_room_end);
+        etStartCal = (ImageView) convertView.findViewById(R.id.btn_room_start_cal);
+        etEndCal = (ImageView) convertView.findViewById(R.id.btn_room_end_cal);
         btnSetCheckpoints = (Button) convertView.findViewById(R.id.btnSetCheckpoints);
         lvMarkers = (ListView) convertView.findViewById(R.id.lvCreatedMarkers);
         checkpointAdapter = new CheckpointAdapter(getContext(),R.layout.marker_list_content, new ArrayList<Checkpoint>());
@@ -77,21 +84,19 @@ public class RoomCreateFragment extends DialogFragment {
         context = this.getContext();
         activity = getActivity();
 
-        etStart.setOnClickListener(new View.OnClickListener() {
+        etStartCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createDateTimePicker();
                 startTime = true;
-                //fromDatePickerDialog.show();
             }
         });
 
-        etEnd.setOnClickListener(new View.OnClickListener() {
+        etEndCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createDateTimePicker();
                 startTime = false;
-               // toDatePickerDialog.show();
             }
         });
 
@@ -120,9 +125,10 @@ public class RoomCreateFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View view) {
-                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null){
+                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null && etDescription != null){
                             Room room = new Room(etName.getText().toString(), startDate, endDate);
                             room.setCheckpoints(checkpoints);
+                            room.setDescription(etDescription.getText().toString());
                             RoomListActivity.databaseHandler.createRoom(room);
                             d.dismiss();
                             Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
