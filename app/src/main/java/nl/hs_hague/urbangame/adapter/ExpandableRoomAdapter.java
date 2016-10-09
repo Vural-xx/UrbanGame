@@ -67,8 +67,11 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition))
-                .size();
+        if(listDataChild != null && listDataHeader != null && listDataChild.size() != 0){
+            return this.listDataChild.get(this.listDataHeader.get(groupPosition))
+                    .size();
+        }
+        return 0;
     }
 
     @Override
