@@ -117,4 +117,7 @@
     <string name="profile_updated"></string>
     <string name="markers">Markers</string>
     <string name="hint">Hint</string>
+    <string name="name_label">Name:</string>
+    <string name="description_label">Description:</string>
+    <string name="join_room">Join Room</string>
 </resources>

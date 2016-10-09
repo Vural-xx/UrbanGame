@@ -1,9 +1,70 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/room_detail"
-    style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+    android:orientation="vertical"
+    android:padding="100dp"
+    android:layout_gravity="center"
+    android:gravity="center_horizontal">
+
+    <TableLayout
+        android:id="@+id/mainTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:paddingLeft="3dip"
+        android:paddingRight="3dip"
+        android:shrinkColumns="1"
+        android:stretchColumns="*">
+
+        <TableRow>
+
+            <TextView
+                style="?android:attr/textAppearanceLarge"
+                android:layout_height="wrap_content"
+                android:text="@string/name_label" />
+
+            <TextView
+                android:id="@+id/room_detail"
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="?android:attr/textAppearanceLarge"
+                android:layout_height="wrap_content"
+                android:text="@string/description_label" />
+
+            <TextView
+                android:id="@+id/room_description"
+                android:text="Hallo hier kommt die Beschreibung"
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+        </TableRow>
+
+        <TableRow
+            android:layout_marginTop="50dp">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/join_room"/>
+        </TableRow>
+
+    </TableLayout>
+
+
+
+</LinearLayout>
+
