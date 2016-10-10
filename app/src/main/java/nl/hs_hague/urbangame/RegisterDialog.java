@@ -29,6 +29,7 @@ public class RegisterDialog extends DialogFragment {
     private FirebaseAuth fbAuth;
     private FirebaseUser fbUser;
     private UserProfileChangeRequest fbUPCR;
+    boolean didRegisterWork;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -41,68 +42,49 @@ public class RegisterDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
-                        EditText etUsername = (EditText) getDialog().findViewById(R.id.editTextLogin);
                         EditText etEmail = (EditText) getDialog().findViewById(R.id.editTextEmail);
                         EditText etPass1 = (EditText) getDialog().findViewById(R.id.editTextPass1);
                         EditText etPass2 = (EditText) getDialog().findViewById(R.id.editTextPass2);
 
-                        final String username = etUsername.getText().toString();
                         String email = etEmail.getText().toString();
                         String pass1 = etPass1.getText().toString();
                         String pass2 = etPass2.getText().toString();
 
-                        if(!username.equals("") && !email.equals("") && !pass1.equals("")) {
+                        if(!email.equals("") && !pass1.equals("")) {
 
-                            if(pass1.equals(pass2)) {
-                                User newUser = new User();
-                                newUser.setEmail(email);
-                                newUser.setUsername(username);
-                                newUser.setPassword(pass1);
-                                newUser.setAvatar(null);
-                                newUser.setScore(0);
+                            if(pass1.equals(pass2) && pass1.length()>5) {
 
-                                db = new DatabaseHandler();
+
                                 fbAuth = FirebaseAuth.getInstance();
-                                db.createUser(newUser);
-                                fbAuth.createUserWithEmailAndPassword(email, pass1);
-                                //fbUPCR = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
-                                fbAuth.signInWithEmailAndPassword(email, pass1)
+
+
+                                fbAuth.createUserWithEmailAndPassword(email, pass1)
                                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                             @Override
                                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                                fbUser = fbAuth.getCurrentUser();
-                                                fbUPCR = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
+                                                Log.d(TAG, "IT WORKS");
+                                                didRegisterWork = true;
+                                                //Toast.makeText(getActivity().getApplicationContext(), R.string.registration_successful, Toast.LENGTH_LONG).show();
 
-                                                fbUser.updateProfile(fbUPCR);
-                                                fbUser = fbAuth.getCurrentUser();
-
-                                                Log.d(TAG, "IT WORKS   " + fbUser.getEmail() + "   " + fbUser.getDisplayName());
-//                                                Toast.makeText(getActivity(), fbUser.getDisplayName() + " registered", Toast.LENGTH_LONG).show();
-
-                                                //Toast.makeText(RegisterDialog.this, fbUser.getEmail() + " registered", Toast.LENGTH_LONG).show();
-
-
-                                                // If sign in fails, display a message to the user. If sign in succeeds
-                                                // the auth state listener will be notified and logic to handle the
-                                                // signed in user can be handled in the listener.
                                                 if (!task.isSuccessful()) {
+                                                    didRegisterWork = false;
                                                     Log.w(TAG, "signInWithEmail:failed", task.getException());
                                                     //Toast.makeText(getContext(), R.string.registration_failed, Toast.LENGTH_LONG).show();
 
 
                                                 }
 
-                                                // ...
                                             }
                                         });
 
+                                if(didRegisterWork){
+                                    Toast.makeText(getContext(), R.string.registration_successful, Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    //Toast.makeText(getContext(), R.string.registration_failed, Toast.LENGTH_LONG).show();
 
+                                }
 
-  //                              fbUser = fbAuth.getCurrentUser();
-                                //fbUser.updateProfile(fbUPCR);
-                                //fbUser = fbAuth.getCurrentUser();
-
-                                //Toast.makeText(getContext(), (fbUser.getEmail() + " registered"), Toast.LENGTH_LONG).show();
                             }
 
                             else{
@@ -114,6 +96,8 @@ public class RegisterDialog extends DialogFragment {
                             Toast.makeText(getContext(), R.string.fields_unfilled, Toast.LENGTH_LONG).show();
 
                         }
+
+
 
                     }
                 })
@@ -127,5 +111,10 @@ public class RegisterDialog extends DialogFragment {
 
 
         return builder.create();
+    }
+
+    public void makeToast(String _message){
+        Toast.makeText(getContext(), _message, Toast.LENGTH_LONG).show();
+
     }
 }

@@ -83,7 +83,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    Log.d("profileUpdateUsername", "User profile updated.");
+                                                    Log.d(fbUser.getDisplayName(), "User profile updated.");
                                                     //Toast.makeText(getApplicationContext(), fbUser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
                                                 }
@@ -101,7 +101,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            Log.d("email update", "User email address updated.");
+                                            Log.d(fbUser.getEmail(), "User email address updated.");
                                         }
                                     }
                                 });

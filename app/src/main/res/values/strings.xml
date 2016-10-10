@@ -104,7 +104,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="passwords_unmatching">Both passwords fields must match</string>
+    <string name="passwords_unmatching">Both passwords fields must match and contain at least 6 characters</string>
     <string name="fields_unfilled">You have to fill all the fields to proceed</string>
     <string name="registration_successful">User Registrated, you can now log in</string>
 
@@ -114,7 +114,7 @@
     <string name="game_end">End of Game</string>
     <string name="auth_failed">auth failed</string>
     <string name="profile">Profile</string>
-    <string name="profile_updated"></string>
+    <string name="profile_updated">profile updated</string>
     <string name="markers">Markers</string>
     <string name="hint">Hint</string>
     <string name="name_label">Name:</string>

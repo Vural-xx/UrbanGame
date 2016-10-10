@@ -12,19 +12,11 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editTextLogin"
-        android:hint="login..."
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/editTextPass1"
         android:hint="password..."
-        android:layout_below="@+id/editTextLogin"
+        android:layout_below="@+id/editTextEmail"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -44,6 +36,6 @@
         android:ems="10"
         android:hint="e-mail..."
         android:id="@+id/editTextEmail"
-        android:layout_below="@+id/editTextPass2"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
