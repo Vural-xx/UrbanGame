@@ -21,6 +21,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -30,7 +31,7 @@ public class UserSettingsActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     Button confirmButton;
     Button uImgButton;
-    private StorageReference mStorageReference;
+    StorageReference mStorageReference;
     private static final int GALLERY_INTENT = 2;
 
 
@@ -48,6 +49,7 @@ public class UserSettingsActivity extends AppCompatActivity {
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         confirmButton = (Button)findViewById(R.id.btnConfirm);
         uImgButton = (Button) findViewById(R.id.btnUploadImage);
+        mStorageReference = FirebaseStorage.getInstance().getReference();
 
 
 
@@ -145,6 +147,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(getApplicationContext(), R.string.user_photo_uploaded, Toast.LENGTH_SHORT).show();
+                    
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
