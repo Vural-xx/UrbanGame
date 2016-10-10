@@ -247,13 +247,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                 if (idMarkers.isEmpty() == true) {
                                                     idMarkers.add(arg0);
+                                                    idMarkers.get(0).setTitle(mess);
 
                                                 }
                                                 do {
                                                     if (arg0.equals(idMarkers.get(i))) {
                                                         if (!mess.equals(""))
                                                             idMarkers.get(i).setTitle(mess);
-
                                                         Toast.makeText(context, "Your marker: " + idMarkers.get(i).getTitle() + " " + idMarkers.get(i).getId(), Toast.LENGTH_SHORT).show();
                                                         mess = "";
                                                         break;
