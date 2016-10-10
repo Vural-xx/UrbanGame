@@ -141,13 +141,27 @@ public class UserSettingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent){
         super.onActivityResult(requestCode, resultCode, intent);
         if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK){
-            Uri uri = intent.getData();
+            final Uri uri = intent.getData();
             StorageReference filepath = mStorageReference.child("UserPhotos").child(uri.getLastPathSegment());
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(getApplicationContext(), R.string.user_photo_uploaded, Toast.LENGTH_SHORT).show();
-                    
+
+                    UserProfileChangeRequest fbUpdates = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(uri)
+                            .build();
+
+                    fbUser.updateProfile(fbUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(fbUser.getPhotoUrl().toString(), "photo updated.");
+                            }
+                        }
+                    });
+
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
