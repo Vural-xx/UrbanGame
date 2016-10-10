@@ -39,7 +39,9 @@ import java.util.List;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CheckpointHolder;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener, Serializable {
+import static java.lang.Thread.sleep;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener, Serializable, Runnable {
 
     private GoogleMap mMap; //The map that we will show
     private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
@@ -241,11 +243,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         @Override
                                         public boolean onMarkerClick(Marker arg0) {
                                             showNoticeDialog();
+                                            Thread thread = new Thread();
+                                            thread.start();
                                             int i = 0;
                                             try {
 
                                                 if (idMarkers.isEmpty() == true) {
                                                     idMarkers.add(arg0);
+                                                    idMarkers.get(0).setTitle(mess);
 
                                                 }
                                                 do {
@@ -473,5 +478,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         savedInstanceState.putSerializable(SAVED_GAME, MapsActivity.this);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void run() {
+        try {
+            sleep(30000);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
