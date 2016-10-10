@@ -70,7 +70,7 @@ public class RegisterDialog extends DialogFragment {
                                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                             @Override
                                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                                //fbUser = fbAuth.getCurrentUser();
+                                                fbUser = fbAuth.getCurrentUser();
                                                 fbUPCR = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
 
                                                 fbUser.updateProfile(fbUPCR);
