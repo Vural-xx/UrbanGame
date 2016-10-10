@@ -77,7 +77,7 @@ public class RegisterDialog extends DialogFragment {
                                                 fbUser = fbAuth.getCurrentUser();
 
                                                 Log.d(TAG, "IT WORKS   " + fbUser.getEmail() + "   " + fbUser.getDisplayName());
-                                                //Toast.makeText(getContext(), fbUser.getDisplayName() + " registered", Toast.LENGTH_LONG).show();
+//                                                Toast.makeText(getActivity(), fbUser.getDisplayName() + " registered", Toast.LENGTH_LONG).show();
 
                                                 //Toast.makeText(RegisterDialog.this, fbUser.getEmail() + " registered", Toast.LENGTH_LONG).show();
 
@@ -87,7 +87,7 @@ public class RegisterDialog extends DialogFragment {
                                                 // signed in user can be handled in the listener.
                                                 if (!task.isSuccessful()) {
                                                     Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                                    Toast.makeText(getContext(), R.string.registration_failed, Toast.LENGTH_LONG).show();
+                                                    //Toast.makeText(getContext(), R.string.registration_failed, Toast.LENGTH_LONG).show();
 
 
                                                 }
