@@ -51,7 +51,6 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         Room room = (Room)getChild(groupPosition,childPosition);
 
         final String childText = (String) room.getName();
-
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
