@@ -11,6 +11,7 @@ import java.util.List;
 public class Room implements Serializable {
     private String name;
     private String description;
+    private User owner;
     private List<User> members;
     private Date startDate;
     private Date endDate;
@@ -36,6 +37,14 @@ public class Room implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public void setDescription(String description) {
@@ -73,6 +82,7 @@ public class Room implements Serializable {
     public void setCheckpoints(List<Checkpoint> checkpoints) {
         this.checkpoints = checkpoints;
     }
+
 
 
 }
