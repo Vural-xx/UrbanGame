@@ -204,7 +204,7 @@ public class RoomListActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean playerMemberofRoom(Room room){
+    public static boolean playerMemberofRoom(Room room){
         if(room.getMembers()!= null){
             for (User u: room.getMembers()) {
                 if(u.getEmail().equals(firebaseAuth.getCurrentUser().getEmail())){

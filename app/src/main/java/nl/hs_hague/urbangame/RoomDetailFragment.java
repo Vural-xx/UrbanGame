@@ -69,7 +69,7 @@ public class RoomDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
             ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
             bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
-            if(currentRoom.getOwner().getEmail().equals(RoomListActivity.firebaseAuth.getCurrentUser().getEmail())){
+            if(currentRoom.getOwner().getEmail().equals(RoomListActivity.firebaseAuth.getCurrentUser().getEmail()) || RoomListActivity.playerMemberofRoom(currentRoom)){
                 bntJoinRoom.setVisibility(View.INVISIBLE);
             }else{
                 bntJoinRoom.setOnClickListener(new View.OnClickListener() {
