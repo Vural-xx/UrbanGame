@@ -12,6 +12,10 @@ public class Checkpoint implements Serializable{
     private Double longitude;
     private String hint;
 
+    public Checkpoint(){
+
+    }
+
     public Checkpoint(String name, Double latitude, Double longitude){
         this.name = name;
         this.latitude = latitude;

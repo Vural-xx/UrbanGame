@@ -27,11 +27,13 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     // child data in format of header title, child title
     private HashMap<String, List<Room>> listDataChild;
 
-    public ExpandableRoomAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<Room>> listChildData) {
+    public ExpandableRoomAdapter(Context context, List<String> listDataHeader) {
         this._context = context;
         this.listDataHeader = listDataHeader;
-        this.listDataChild = listChildData;
+        listDataChild = new HashMap<String, List<Room>>();
+        for(int i = 0; i < listDataHeader.size(); i++){
+            listDataChild.put(listDataHeader.get(i), new ArrayList<Room>());
+        }
     }
 
     @Override
@@ -66,7 +68,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if(listDataChild != null && listDataHeader != null && listDataChild.size() != 0){
+        if(listDataChild != null && listDataHeader != null && listDataChild.size() != 0 && listDataChild.get(listDataHeader.get(groupPosition)) != null){
             return this.listDataChild.get(this.listDataHeader.get(groupPosition))
                     .size();
         }
@@ -126,19 +128,11 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         super.notifyDataSetChanged();
     }
 
+
     public void updateRooms(List<Room> newlist, int group) {
-        if(listDataChild.get(group) != null){
-            listDataChild.get(group).clear();
-            listDataChild.get(group).addAll(newlist);
-            this.notifyDataSetChanged();
-        }else{
-            listDataChild = new HashMap<String, List<Room>>();
-            listDataChild.put(listDataHeader.get(0),new ArrayList<Room>());
-            listDataChild.put(listDataHeader.get(1),new ArrayList<Room>());
-            listDataChild.get(listDataHeader.get(group)).clear();
-            listDataChild.get(listDataHeader.get(group)).addAll(newlist);
-            this.notifyDataSetChanged();
-        }
+        listDataChild.get(listDataHeader.get(group)).clear();
+        listDataChild.get(listDataHeader.get(group)).addAll(newlist);
+        this.notifyDataSetChanged();
     }
 
 }

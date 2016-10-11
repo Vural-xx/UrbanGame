@@ -17,6 +17,10 @@ public class Room implements Serializable {
     private Date endDate;
     private List<Checkpoint> checkpoints;
 
+    public Room(){
+
+    }
+
     public Room(String name){
         this.name = name;
     }

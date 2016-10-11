@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +38,7 @@ import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
+import nl.hs_hague.urbangame.model.User;
 
 public class RoomListActivity extends AppCompatActivity {
 
@@ -49,6 +52,7 @@ public class RoomListActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
     private String searchQuery;
+    public static FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,44 +80,11 @@ public class RoomListActivity extends AppCompatActivity {
         // preparing list data
         prepareListData();
 
-        databaseHandler = new DatabaseHandler();
-
-        searchQuery = "";
-        Intent searchIntent = getIntent();
-        if(Intent.ACTION_SEARCH.equals(searchIntent.getAction())){
-            searchQuery = searchIntent.getStringExtra(SearchManager.QUERY);
-        }
-
-
-        roomAdapter = new ExpandableRoomAdapter(this, roomsHeader, rooms);
+        roomAdapter = new ExpandableRoomAdapter(this, roomsHeader);
         // setting list adapter
         lvRooms.setAdapter(roomAdapter);
 
-        databaseHandler.getRoot().child("rooms").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Set<Room> set = new HashSet<Room>();
-                Iterator i = dataSnapshot.getChildren().iterator();
-
-                while (i.hasNext()){
-                    String keyItem = ((DataSnapshot)i.next()).getKey();
-                    if(searchQuery != null &&  !searchQuery.equals("") &&  keyItem.toLowerCase().contains(searchQuery.toLowerCase())){
-                        set.add(new Room(keyItem));
-                    }else if(searchQuery == null || searchQuery.equals("")){
-                        set.add(new Room(keyItem));
-                    }
-                }
-                rooms.put(roomsHeader.get(0), new ArrayList<Room>(set));
-                roomAdapter.updateRooms(new ArrayList<Room>(set),0);
-                lvRooms.expandGroup(0);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         context = this;
 
 
@@ -233,11 +204,78 @@ public class RoomListActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean playerMemberofRoom(Room room){
+        if(room.getMembers()!= null){
+            for (User u: room.getMembers()) {
+                if(u.getEmail().equals(firebaseAuth.getCurrentUser().getEmail())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void prepareListData(){
         roomsHeader = new ArrayList<String>();
         rooms = new HashMap<String, List<Room>>();
-        roomsHeader.add("Rooms");
+        roomsHeader.add("Started Rooms");
+        roomsHeader.add("Public Rooms");
         roomsHeader.add("Own Rooms");
+
+
+        databaseHandler = new DatabaseHandler();
+
+        searchQuery = "";
+        Intent searchIntent = getIntent();
+        if(Intent.ACTION_SEARCH.equals(searchIntent.getAction())){
+            searchQuery = searchIntent.getStringExtra(SearchManager.QUERY);
+        }
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
+                databaseHandler.getRoot().child("rooms").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Set<Room> startedSet = new HashSet<Room>();
+                        Set<Room> publicSet = new HashSet<Room>();
+                        Set<Room> ownSet = new HashSet<Room>();
+                        Iterator i = dataSnapshot.getChildren().iterator();
+                        while (i.hasNext()){
+                            Room room = (Room)(((DataSnapshot)i.next()).getValue(Room.class));
+                            if(searchQuery != null &&  !searchQuery.equals("") &&  room.getName().toLowerCase().contains(searchQuery.toLowerCase())){
+                                publicSet.add(room);
+                            }else if(searchQuery == null || searchQuery.equals("")){
+                                if(room.getOwner().getEmail().equals(firebaseAuth.getCurrentUser().getEmail())){
+                                    ownSet.add(room);
+                                }else if(!room.getOwner().getEmail().equals(firebaseAuth.getCurrentUser().getEmail())
+                                        && !playerMemberofRoom(room)) {
+                                    publicSet.add(room);
+                                }else{
+                                    startedSet.add(room);
+                                }
+
+                            }
+                        }
+                        rooms.put(roomsHeader.get(0), new ArrayList<Room>(startedSet));
+                        roomAdapter.updateRooms(new ArrayList<Room>(startedSet),0);
+                        rooms.put(roomsHeader.get(1), new ArrayList<Room>(publicSet));
+                        roomAdapter.updateRooms(new ArrayList<Room>(publicSet),1);
+                        rooms.put(roomsHeader.get(2), new ArrayList<Room>(ownSet));
+                        roomAdapter.updateRooms(new ArrayList<Room>(ownSet),2);
+                        lvRooms.expandGroup(0);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                Toast.makeText(RoomListActivity.this, firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

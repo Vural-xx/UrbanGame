@@ -15,6 +15,14 @@ public class User implements Serializable {
     private Blob avatar;
     private int score;
 
+    public User(){
+
+    }
+
+    public User(String email){
+        this.email = email;
+    }
+
     public String getEmail() {
         return email;
     }
