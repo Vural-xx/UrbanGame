@@ -9,6 +9,7 @@ import java.sql.Blob;
 
 public class User implements Serializable {
 
+    private String uuid;
     private String email;
     private String username;
     private String password;
@@ -19,8 +20,16 @@ public class User implements Serializable {
 
     }
 
-    public User(String email){
-        this.email = email;
+    public User(String uuid){
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getEmail() {
@@ -62,4 +71,6 @@ public class User implements Serializable {
     public void setScore(int score) {
         this.score = score;
     }
+
+
 }

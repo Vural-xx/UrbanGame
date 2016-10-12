@@ -61,15 +61,11 @@ public class RoomDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.room_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        if(currentRoom.getOwner().getEmail().equals(RoomListActivity.firebaseAuth.getCurrentUser().getEmail())){
-
-        }
         if (currentRoom != null) {
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
             ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
             bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
-            if(currentRoom.getOwner().getEmail().equals(RoomListActivity.firebaseAuth.getCurrentUser().getEmail()) || RoomListActivity.playerMemberofRoom(currentRoom)){
+            if(currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)){
                 bntJoinRoom.setVisibility(View.INVISIBLE);
             }else{
                 bntJoinRoom.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +75,7 @@ public class RoomDetailFragment extends Fragment {
                             List<User> userList = new ArrayList<User>();
                             currentRoom.setMembers(userList);
                         }
-                        currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getEmail()));
+                        currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
                         RoomListActivity.databaseHandler.createRoom(currentRoom);
                     }
                 });

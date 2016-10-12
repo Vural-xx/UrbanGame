@@ -11,7 +11,7 @@ import java.util.List;
 public class Room implements Serializable {
     private String name;
     private String description;
-    private User owner;
+    private String ownerId;
     private List<User> members;
     private Date startDate;
     private Date endDate;
@@ -43,16 +43,16 @@ public class Room implements Serializable {
         return description;
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public List<User> getMembers() {

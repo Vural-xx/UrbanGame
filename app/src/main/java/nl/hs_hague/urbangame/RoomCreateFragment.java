@@ -33,7 +33,6 @@ import nl.hs_hague.urbangame.adapter.CheckpointAdapter;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CheckpointHolder;
 import nl.hs_hague.urbangame.model.Room;
-import nl.hs_hague.urbangame.model.User;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -130,7 +129,7 @@ public class RoomCreateFragment extends DialogFragment {
                             Room room = new Room(etName.getText().toString(), startDate, endDate);
                             room.setCheckpoints(checkpoints);
                             room.setDescription(etDescription.getText().toString());
-                            room.setOwner(new User(RoomListActivity.firebaseAuth.getCurrentUser().getEmail()));
+                            room.setOwnerId(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
                             RoomListActivity.databaseHandler.createRoom(room);
                             d.dismiss();
                             Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
