@@ -1,9 +1,13 @@
 package nl.hs_hague.urbangame.adapter;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +69,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         try{
             CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
             Location locaux = objCurrentLocationAdapter.getCurrentLocation();
+            System.out.println(locaux);
             if(!room.getCheckpoints().isEmpty())
             {
                     listCheck = room.getCheckpoints();

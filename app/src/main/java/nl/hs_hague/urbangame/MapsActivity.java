@@ -252,7 +252,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 if (idMarkers.isEmpty() == true) {
                                                     idMarkers.add(arg0);
                                                     idMarkers.get(0).setTitle(mess);
-
+                                                    mess = "";
                                                 }
                                                 do {
                                                     if (arg0.equals(idMarkers.get(i))) {
