@@ -39,24 +39,6 @@ public class RoomDetailFragment extends Fragment {
                 appBarLayout.setTitle(currentRoom.getName());
             }
 
-
-            TabHost tabHost = (TabHost) getActivity().findViewById(R.id.mytabhost);
-            tabHost.setup();
-
-            TabHost.TabSpec spec1 = tabHost.newTabSpec("tab1");
-            spec1.setContent(R.id.tab1);
-            spec1.setIndicator("General");
-            tabHost.addTab(spec1);
-
-            TabHost.TabSpec spec2 = tabHost.newTabSpec("tab2");
-            spec1.setContent(R.id.tab2);
-            spec1.setIndicator("Members");
-            tabHost.addTab(spec2);
-
-            TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
-            spec1.setContent(R.id.tab3);
-            spec1.setIndicator("Progress");
-            tabHost.addTab(spec3);
         }
     }
 
@@ -64,6 +46,24 @@ public class RoomDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.room_detail, container, false);
+
+        TabHost tabHost = (TabHost) rootView.findViewById(R.id.mytabhost);
+        tabHost.setup();
+
+        TabHost.TabSpec spec1 = tabHost.newTabSpec("tab1");
+        spec1.setContent(R.id.tab1);
+        spec1.setIndicator("General");
+        tabHost.addTab(spec1);
+
+        TabHost.TabSpec spec2 = tabHost.newTabSpec("tab2");
+        spec2.setContent(R.id.tab2);
+        spec2.setIndicator("Members");
+        tabHost.addTab(spec2);
+
+        TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
+        spec3.setContent(R.id.tab3);
+        spec3.setIndicator("Progress");
+        tabHost.addTab(spec3);
 
         if (currentRoom != null) {
 
