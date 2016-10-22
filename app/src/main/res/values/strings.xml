@@ -123,4 +123,7 @@
     <string name="user_photo_uploaded">picture uploaded</string>
     <string name="user_photo_upload_fail">failed to upload a photo</string>
     <string name="registration_failed">failed to register</string>
+    <string name="automatic_login_key">Automatic Login</string>
+    <string name="pref_title_authomatic_login">Automatic Login</string>
+    <string name="pref_summary_automatic_login">Enable to login automatically after first successful login</string>
 </resources>

@@ -70,7 +70,8 @@ public class Welcome_Screen extends Activity {
                     Boolean login=preferences.getBoolean("Login",false);
                     Boolean login_face=preferences.getBoolean("Login_face",false);
                     Boolean login_fire=preferences.getBoolean("Login_fire",false);
-                    if (!login)
+                    Boolean authomatedLogin = preferences.getBoolean(SettingsActivity.authomatic_login_key,true);
+                    if (!login || !authomatedLogin)
                     {
                     Intent intent = new Intent(Welcome_Screen.this,
                             Login.class);

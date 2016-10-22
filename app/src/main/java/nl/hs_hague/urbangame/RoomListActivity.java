@@ -62,6 +62,10 @@ public class RoomListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean name = preferences.getBoolean(SettingsActivity.authomatic_login_key, true);
+        
+
         // Firebase Registration
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
