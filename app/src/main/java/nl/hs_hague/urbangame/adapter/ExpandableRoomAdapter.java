@@ -3,6 +3,7 @@ package nl.hs_hague.urbangame.adapter;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import nl.hs_hague.urbangame.R;
+import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 
 /**
@@ -26,6 +28,8 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     private List<String> listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<Room>> listDataChild;
+    private List<Checkpoint> listCheck;
+    private float[] res;
 
     public ExpandableRoomAdapter(Context context, List<String> listDataHeader) {
         this._context = context;
@@ -52,13 +56,27 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView, ViewGroup parent) {
         Room room = (Room)getChild(groupPosition,childPosition);
 
-        final String childText = (String) room.getName();
+         String childText = (String) room.getName();
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.room_list_content, null);
         }
+        try{
+            CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
+            Location locaux = objCurrentLocationAdapter.getCurrentLocation();
+            if(!room.getCheckpoints().isEmpty())
+            {
+                    listCheck = room.getCheckpoints();
+                   for(int i =0; i<listCheck.size(); i++){
+                       locaux.distanceBetween(listCheck.get(i).getLatitude(),listCheck.get(i).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
+                       childText.concat(" Distance: "+res[0]);
+                   }
+            }
 
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
 
