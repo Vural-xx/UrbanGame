@@ -29,6 +29,7 @@ public class RoomDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM = "item_id";
     private Room currentRoom;
+   // public static final String distance="";
     private Button bntJoinRoom;
 
     /**
@@ -54,6 +55,18 @@ public class RoomDetailFragment extends Fragment {
                 appBarLayout.setTitle(currentRoom.getName());
             }
         }
+        /*if (getArguments().containsKey(distance)) {
+            // Load the dummy content specified by the fragment
+            // arguments. In a real-world scenario, use a Loader
+            // to load content from a content provider.
+            currentRoom = (Room) getArguments().getSerializable(distance);
+
+            Activity activity = this.getActivity();
+            TextView descrip = (TextView) activity.findViewById(R.id.room_description);
+            if (descrip != null) {
+                descrip.setText(descrip.getText()+"Distance: "+distance);
+            }
+        }*/
     }
 
     @Override
@@ -84,4 +97,5 @@ public class RoomDetailFragment extends Fragment {
 
         return rootView;
     }
+
 }

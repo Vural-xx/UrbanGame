@@ -66,7 +66,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.room_list_content, null);
         }
-        try{
+        /*try{
             CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
             Location locaux = objCurrentLocationAdapter.getCurrentLocation();
             System.out.println(locaux);
@@ -81,7 +81,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
         }catch(Exception e){
             e.printStackTrace();
-        }
+        }*/
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
 

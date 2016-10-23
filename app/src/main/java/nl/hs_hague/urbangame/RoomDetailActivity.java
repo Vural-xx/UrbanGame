@@ -17,6 +17,7 @@ import android.view.MenuItem;
 public class RoomDetailActivity extends AppCompatActivity {
 
     public static final String ARG_ITEM = "item_id";
+    public static final String distance = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class RoomDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putSerializable(RoomDetailFragment.ARG_ITEM, getIntent().getSerializableExtra(RoomDetailFragment.ARG_ITEM));
+           // arguments.putSerializable(RoomDetailFragment.distance, getIntent().getSerializableExtra(RoomDetailFragment.distance));
             RoomDetailFragment fragment = new RoomDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

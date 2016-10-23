@@ -59,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int counterMarkers;
     String mess;
     private List<String> hints = new ArrayList<String>(10);
+    private List<String> names = new ArrayList<String>(10);
     LocationRequest locationRequest;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final String SAVED_GAME = "savedGame";
@@ -156,9 +157,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void showNoticeDialog() {
+    public void showNoticeDialog(String markerid) {
         // Create an instance of the dialog fragment and show it
         dialog = new MarkersFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(MarkersFragment.ARG_ITEM,markerid);
+        dialog.setArguments(arguments);
         dialog.show(getSupportFragmentManager(), "Add a name to your marker");
     }
 
@@ -235,7 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             //Getting our current locality
                             markersAddress = geo.getFromLocation(cLocation.latitude, cLocation.longitude, 2);
                             cLocality = markersAddress.get(0).getLocality();
-
+                           // mess = "Marker1";
                             if (cLocality.equals(mLocality)) {
                                 if (counterMarkers < maxMarkers) {
                                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
@@ -243,22 +247,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                         @Override
                                         public boolean onMarkerClick(Marker arg0) {
-                                            showNoticeDialog();
-                                            Thread thread = new Thread();
-                                            thread.start();
+
+                                            showNoticeDialog(arg0.getId());
+                                            /*Thread thread = new Thread();
+                                            thread.start();*/
                                             int i = 0;
                                             try {
 
                                                 if (idMarkers.isEmpty() == true) {
                                                     idMarkers.add(arg0);
-                                                    idMarkers.get(0).setTitle(mess);
-                                                    mess = "";
+
                                                 }
                                                 do {
                                                     if (arg0.equals(idMarkers.get(i))) {
                                                         if (!mess.equals(""))
                                                             idMarkers.get(i).setTitle(mess);
-                                                        Toast.makeText(context, "Your marker: " + idMarkers.get(i).getTitle() + " " + idMarkers.get(i).getId(), Toast.LENGTH_SHORT).show();
+
                                                         mess = "";
                                                         break;
                                                     }
@@ -268,8 +272,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     idMarkers.add(arg0);
                                                     if (!mess.equals(""))
                                                         idMarkers.get(i).setTitle(mess);
-
-                                                    Toast.makeText(context, "Your marker: " + idMarkers.get(i).getTitle() + " " + idMarkers.get(i).getId(), Toast.LENGTH_SHORT).show();
                                                     mess = "";
                                                 }
                                             } catch (Exception e) {
@@ -278,8 +280,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             return true;
                                         }
                                     });
-                                    for (int i = 0; i < markers.size(); i++)
-                                        System.out.println("Marker " + i + " " + markers.get(i).latitude + " " + markers.get(i).longitude);
+
                                 } else {
                                     Toast.makeText(context, "You can not add more markers", Toast.LENGTH_SHORT).show();
                                 }
@@ -376,9 +377,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String name, String hint) {
+    public void onDialogPositiveClick(DialogFragment dialog, String name, String hint, String id) {
         mess = name;
-        hints.add(hint);
+        System.out.println("You clicked on: "+id);
+        String getId[] = id.split("m");
+        int idReceived = Integer.parseInt(getId[1]);
+        if((names.isEmpty() == true) || (names.size() == idReceived)){
+            names.add(name);
+            hints.add(hint);
+        }
+        else{
+            names.get(idReceived).replace(names.get(idReceived),name);
+            hints.get(idReceived).replace(hints.get(idReceived),hint);
+        }
     }
 
     public List<Address> getMarkers() {
@@ -429,6 +440,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CheckpointHolder checkpointHolder = new CheckpointHolder();
         checkpointHolder.setCheckpoints(new ArrayList<Checkpoint>());
         for (int i = 0; i < idMarkers.size(); i++){
+
+            idMarkers.get(i).setTitle(names.get(i));
             Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
             checkpoint.setHint(hints.get(i));
             checkpointHolder.getCheckpoints().add(checkpoint);

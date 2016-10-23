@@ -15,10 +15,11 @@ public class MarkersFragment extends DialogFragment {
     String name;
     EditText name_text;
     EditText hint;
+    public static final String ARG_ITEM = "item_id";
 
 
     public interface MakersFragmentListener {
-        public void onDialogPositiveClick(DialogFragment dialog, String name, String hint);
+        public void onDialogPositiveClick(DialogFragment dialog, String name, String hint, String id);
     }
 
 
@@ -33,7 +34,9 @@ public class MarkersFragment extends DialogFragment {
 
 
 
-
+        savedInstanceState = getArguments();
+        name = savedInstanceState.getString(ARG_ITEM);
+         //System.out.println("Arg: "+name);
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflator)
@@ -43,9 +46,8 @@ public class MarkersFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         name_text = (EditText) inflator.findViewById(R.id.name_marker);
                         hint = (EditText) inflator.findViewById(R.id.hint_marker);
-                        System.out.println("Nombre: "+name_text.getText().toString());
                         //name_text.setText("Yellow");
-                        mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString(), hint.getText().toString());
+                        mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString(), hint.getText().toString(),name);
 
 
                     }

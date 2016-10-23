@@ -39,7 +39,8 @@
             <TextView
                 style="?android:attr/textAppearanceLarge"
                 android:layout_height="wrap_content"
-                android:text="@string/description_label" />
+                android:text="@string/description_label"
+               />
 
             <TextView
                 android:id="@+id/room_description"
