@@ -99,11 +99,21 @@ public class RoomDetailFragment extends Fragment {
 
             // get the listview
             lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
-            userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, currentRoom.getMembers());;
+            userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, getMembersWithoutCurrentUser());
             lvMembers.setAdapter(userAdapter);
         }
 
         return rootView;
+    }
+
+    public List<User> getMembersWithoutCurrentUser(){
+        List<User> users = new ArrayList<>();
+        for(User u: currentRoom.getMembers()){
+            if(!u.getUuid().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+                users.add(u);
+            }
+        }
+        return users;
     }
 
 }
