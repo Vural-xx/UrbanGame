@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center"
+    android:layout_gravity="top"
     android:gravity="center_horizontal">
 
 
@@ -47,6 +47,10 @@
                         android:layout_height="wrap_content"
                         tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
 
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp" />
+
                     <TextView
                         style="?android:attr/textAppearanceLarge"
                         android:layout_height="wrap_content"
@@ -60,6 +64,10 @@
                         android:layout_height="wrap_content"
                         tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
 
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp" />
+
                     <Button
                         android:id="@+id/btn_join_room"
                         android:layout_width="wrap_content"
@@ -67,6 +75,13 @@
                         android:text="@string/join_room"
                         android:gravity="center"
                         android:layout_gravity="center" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/hints_text"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <LinearLayout

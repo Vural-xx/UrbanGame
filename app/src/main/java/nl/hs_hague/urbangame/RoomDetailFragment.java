@@ -88,6 +88,7 @@ public class RoomDetailFragment extends Fragment {
             bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
             if(currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)){
                 bntJoinRoom.setVisibility(View.INVISIBLE);
+                ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
             }else{
                 bntJoinRoom.setOnClickListener(new View.OnClickListener() {
                     @Override
