@@ -4,15 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by alex on 10/10/2016.
@@ -46,6 +40,7 @@ public class CurrentLocationAdapter {
 
         }
         String provider = lm.getBestProvider(criteria, true);
+
         Location location = lm.getLastKnownLocation(provider);
 
         System.out.println(location);

@@ -1,6 +1,8 @@
 package nl.hs_hague.urbangame.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vural on 29.09.16.
@@ -11,9 +13,10 @@ public class Checkpoint implements Serializable{
     private Double latitude;
     private Double longitude;
     private String hint;
+    private List<String> foundBy;
 
     public Checkpoint(){
-
+        foundBy = new ArrayList<String>();
     }
 
     public Checkpoint(String name, Double latitude, Double longitude){
@@ -54,4 +57,11 @@ public class Checkpoint implements Serializable{
         this.hint = hint;
     }
 
+    public List<String> getFoundBy() {
+        return foundBy;
+    }
+
+    public void setFoundBy(List<String> foundBy) {
+        this.foundBy = foundBy;
+    }
 }
