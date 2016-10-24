@@ -1,15 +1,11 @@
 package nl.hs_hague.urbangame;
 
-import android.*;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,8 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -336,7 +330,7 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient); //Getting the current location
-        Toast.makeText(this,"Your current location: "+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this,"Your current location: "+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
        // prepareListData();
        /* if(!roomsHeader.isEmpty()) {
             for (int j = 0; j<roomsHeader.size(); j++) {
