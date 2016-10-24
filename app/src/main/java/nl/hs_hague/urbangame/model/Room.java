@@ -87,6 +87,15 @@ public class Room implements Serializable {
         this.checkpoints = checkpoints;
     }
 
+    public String gethints()
+    {
+        String hints="";
 
-
+        for(int i=0;i<checkpoints.size();i++)
+        {
+            Checkpoint mycheck=checkpoints.get(i);
+            hints=hints+mycheck.getHint()+"\n";
+        }
+        return hints;
+    }
 }
