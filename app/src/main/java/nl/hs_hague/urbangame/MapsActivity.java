@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<String> hints = new ArrayList<String>(10);
     private List<String> names = new ArrayList<String>(10);
     LocationRequest locationRequest;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final String SAVED_GAME = "savedGame";
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */

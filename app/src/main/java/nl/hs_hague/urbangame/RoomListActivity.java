@@ -1,15 +1,15 @@
 package nl.hs_hague.urbangame;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
@@ -25,8 +25,6 @@ import android.widget.ExpandableListView;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +42,7 @@ import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
+import nl.hs_hague.urbangame.util.CustomLocationListener;
 
 public class RoomListActivity extends AppCompatActivity  {
 
@@ -68,6 +67,17 @@ public class RoomListActivity extends AppCompatActivity  {
         if (findViewById(R.id.room_detail_container) != null) {
             mTwoPane = true;
         }
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            getPermission();
+            return;
+        }
+
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+
+        CustomLocationListener locationListener = new CustomLocationListener();
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -293,6 +303,29 @@ public class RoomListActivity extends AppCompatActivity  {
 
             }
         });
+    }
+
+    private void getPermission() {
+        Activity activity = (Activity) context;
+        ActivityCompat.requestPermissions(activity,
+                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                MapsActivity.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case MapsActivity.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getPermission();
+                }
+                return;
+            }
+        }
     }
 
 

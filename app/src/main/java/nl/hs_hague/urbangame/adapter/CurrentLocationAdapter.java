@@ -69,6 +69,7 @@ public class CurrentLocationAdapter {
         Location locationGPS = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Location locationNet = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+
         long GPSLocationTime = 0;
         if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
 

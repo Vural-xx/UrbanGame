@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.hs_hague.urbangame.adapter.UserAdapter;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 
@@ -22,6 +24,8 @@ public class RoomDetailFragment extends Fragment {
     public static final String ARG_ITEM = "item_id";
     private Room currentRoom;
     private Button bntJoinRoom;
+    private ListView lvMembers;
+    private UserAdapter userAdapter;
 
     public RoomDetailFragment() {
     }
@@ -62,13 +66,13 @@ public class RoomDetailFragment extends Fragment {
         spec2.setIndicator("Members");
         tabHost.addTab(spec2);
 
+
         TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
         spec3.setContent(R.id.tab3);
         spec3.setIndicator("Progress");
         tabHost.addTab(spec3);
 
         if (currentRoom != null) {
-
 
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
             ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
@@ -84,11 +88,19 @@ public class RoomDetailFragment extends Fragment {
                             List<User> userList = new ArrayList<User>();
                             currentRoom.setMembers(userList);
                         }
-                        currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+                        User user = new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
+                        user.setEmail(RoomListActivity.firebaseAuth.getCurrentUser().getEmail());
+                        user.setUsername(RoomListActivity.firebaseAuth.getCurrentUser().getDisplayName());
+                        currentRoom.getMembers().add(user);
                         RoomListActivity.databaseHandler.createRoom(currentRoom);
                     }
                 });
             }
+
+            // get the listview
+            lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
+            userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, currentRoom.getMembers());;
+            lvMembers.setAdapter(userAdapter);
         }
 
         return rootView;
