@@ -318,6 +318,7 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         float[] results = new float[20];
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -345,7 +346,14 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
                         }
                     }
                 }
+
             }
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient); //Getting the current location
+            Toast.makeText(this, "Your current location: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }*/
 
     }
