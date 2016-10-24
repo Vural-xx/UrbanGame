@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ public class RoomDetailFragment extends Fragment {
     private Room currentRoom;
    // public static final String distance="";
     private Button bntJoinRoom;
+    private View view;
 
     public RoomDetailFragment() {
     }
@@ -86,10 +89,13 @@ public class RoomDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
             ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
             bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
+            view = (View) rootView.findViewById(R.id.map_fragment);
+
             if(currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)){
                 bntJoinRoom.setVisibility(View.INVISIBLE);
                 ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
             }else{
+                view.setVisibility(View.INVISIBLE);//hide map
                 bntJoinRoom.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -82,6 +82,13 @@
                         android:id="@+id/hints_text"
                         android:textColor="@android:color/black"
                         android:textSize="18sp" />
+
+                    <fragment
+                        android:layout_width="match_parent"
+                        android:layout_height="341dp"
+                        android:name="nl.hs_hague.urbangame.MapFragment"
+                        android:id="@+id/map_fragment" />
+
                 </LinearLayout>
 
                 <LinearLayout
