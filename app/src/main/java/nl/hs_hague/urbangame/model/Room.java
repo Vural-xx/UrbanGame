@@ -124,4 +124,16 @@ public class Room implements Serializable {
     public void foundCheckpoint(String uuid){
         getCurrentCheckpoint(uuid).getFoundBy().add(uuid);
     }
+
+    public List<Checkpoint> foundCheckPoints(String uuid){
+        List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
+        for(int i = 0; i < checkpoints.size(); i++){
+            for(int j = 0 ; i < checkpoints.get(i).getFoundBy().size(); j++){
+                if(checkpoints.get(i).getFoundBy().get(j).equals(uuid)){
+                    checkpoints.add(checkpoints.get(i));
+                }
+            }
+        }
+        return checkpoints;
+    }
 }

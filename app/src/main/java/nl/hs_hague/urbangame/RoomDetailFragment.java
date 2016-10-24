@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.hs_hague.urbangame.adapter.FoundCheckpointAdapter;
 import nl.hs_hague.urbangame.adapter.UserAdapter;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
@@ -26,6 +27,8 @@ public class RoomDetailFragment extends Fragment {
     private Button bntJoinRoom;
     private ListView lvMembers;
     private UserAdapter userAdapter;
+    private ListView lvCheckpoints;
+    private FoundCheckpointAdapter checkpointAdapter;
 
     public RoomDetailFragment() {
     }
@@ -101,6 +104,10 @@ public class RoomDetailFragment extends Fragment {
             lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
             userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, getMembersWithoutCurrentUser());
             lvMembers.setAdapter(userAdapter);
+
+            lvCheckpoints = (ListView) rootView.findViewById(R.id.lvFoundCheckpoints);
+            checkpointAdapter = new FoundCheckpointAdapter(getContext(), R.layout.room_checkpoint_list_content, currentRoom.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+            lvCheckpoints.setAdapter(checkpointAdapter);
         }
 
         return rootView;
