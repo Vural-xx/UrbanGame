@@ -336,7 +336,7 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient); //Getting the current location
-        Toast.makeText(this,"Your current location: "+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,"Your current location: "+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
        // prepareListData();
        /* if(!roomsHeader.isEmpty()) {
             for (int j = 0; j<roomsHeader.size(); j++) {
