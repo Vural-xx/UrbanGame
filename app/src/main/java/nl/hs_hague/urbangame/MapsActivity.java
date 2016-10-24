@@ -386,7 +386,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             names.add(name);
             hints.add(hint);
         }
-        else{
+        else if(names.size() > idReceived){
+            System.out.println("I entered to the else part"+ name+hint);
             names.get(idReceived).replace(names.get(idReceived),name);
             hints.get(idReceived).replace(hints.get(idReceived),hint);
         }

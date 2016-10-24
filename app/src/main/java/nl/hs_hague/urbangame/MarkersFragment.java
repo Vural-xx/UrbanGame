@@ -36,7 +36,7 @@ public class MarkersFragment extends DialogFragment {
 
         savedInstanceState = getArguments();
         name = savedInstanceState.getString(ARG_ITEM);
-         //System.out.println("Arg: "+name);
+
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflator)

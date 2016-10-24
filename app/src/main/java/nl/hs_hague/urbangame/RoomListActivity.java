@@ -45,7 +45,7 @@ import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 
-public class RoomListActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class RoomListActivity extends AppCompatActivity  {
 
     private boolean mTwoPane;
     ExpandableRoomAdapter roomAdapter;
@@ -57,8 +57,7 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
     private String searchQuery;
-    private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
-    private Location mLastLocation;
+
     public static FirebaseAuth firebaseAuth;
 
     @Override
@@ -70,13 +69,6 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
             mTwoPane = true;
         }
 
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean name = preferences.getBoolean(SettingsActivity.authomatic_login_key, true);
@@ -117,25 +109,15 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
         lvRooms.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-               float [] results = new float[20];
-                float distance=0;
+
                 Room currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(childPosition);
-                try {
-                    if (!currentRoom.getCheckpoints().isEmpty()) {
-                            mLastLocation.distanceBetween(currentRoom.getCheckpoints().get(0).getLatitude(), currentRoom.getCheckpoints().get(0).getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude(), results);
-                            distance = results[0];
-                            System.out.println("Location: " + distance);
-                    }
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
+
                 if (mTwoPane) {
                     RoomDetailFragment fragment = new RoomDetailFragment();
 
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(RoomDetailFragment.ARG_ITEM, currentRoom);
-                   // bundle.putSerializable(RoomDetailFragment.distance,""+distance);
+
                     fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.room_detail_container, fragment)
@@ -145,7 +127,6 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
                     // By clicking on the listElement the new Activity is getting called
                     Intent intent = new Intent(getApplicationContext(), RoomDetailActivity.class);
                     intent.putExtra(RoomDetailActivity.ARG_ITEM, currentRoom);
-                    //intent.putExtra(RoomDetailActivity.distance, "Distance: "+distance);
                     startActivity(intent);
                 }
 
@@ -315,68 +296,6 @@ public class RoomListActivity extends AppCompatActivity implements GoogleApiClie
     }
 
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        float[] results = new float[20];
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient); //Getting the current location
-
-       // Toast.makeText(this,"Your current location: "+mLastLocation.getLatitude()+" "+mLastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
-       // prepareListData();
-       /* if(!roomsHeader.isEmpty()) {
-            for (int j = 0; j<roomsHeader.size(); j++) {
-                if (!rooms.get(roomsHeader.get(j)).isEmpty()) {
-                    for (int i = 0; i < rooms.get(roomsHeader.get(j)).size(); i++) {
-                        if (!rooms.get(roomsHeader.get(j)).get(i).getCheckpoints().isEmpty()) {
-                            for (int k =0; k<rooms.get(roomsHeader.get(j)).get(i).getCheckpoints().size(); k++){
-                                mLastLocation.distanceBetween(rooms.get(roomsHeader.get(j)).get(i).getCheckpoints().get(k).getLatitude(),rooms.get(roomsHeader.get(j)).get(i).getCheckpoints().get(k).getLongitude(),mLastLocation.getLatitude(),mLastLocation.getLongitude(),results);
-                                Toast.makeText(this,"Your distance: "+results[0],Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                }
-
-            }
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient); //Getting the current location
-            Toast.makeText(this, "Your current location: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }*/
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-
-    }
 }
 
