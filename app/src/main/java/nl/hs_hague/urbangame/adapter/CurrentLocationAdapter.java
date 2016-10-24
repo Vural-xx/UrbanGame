@@ -33,7 +33,7 @@ public class CurrentLocationAdapter {
 
 
 
-        Criteria criteria = new Criteria();
+       /* Criteria criteria = new Criteria();
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
         if (currentapiVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -45,8 +45,8 @@ public class CurrentLocationAdapter {
             criteria.setSpeedRequired(true);
 
         }
-        String provider = lm.getBestProvider(criteria, true);
-        Location location = lm.getLastKnownLocation(provider);
+        String provider = lm.getBestProvider(criteria, true);*/
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         System.out.println(location);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

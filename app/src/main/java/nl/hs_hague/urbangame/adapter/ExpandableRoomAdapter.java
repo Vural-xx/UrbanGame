@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +40,8 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     public ExpandableRoomAdapter(Context context, List<String> listDataHeader) {
         this._context = context;
         this.listDataHeader = listDataHeader;
+        listCheck = new ArrayList<Checkpoint>();
+        res = new float[20];
         listDataChild = new HashMap<String, List<Room>>();
         for(int i = 0; i < listDataHeader.size(); i++){
             listDataChild.put(listDataHeader.get(i), new ArrayList<Room>());
@@ -66,24 +70,32 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.room_list_content, null);
         }
-        /*try{
+        try{
             CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
             Location locaux = objCurrentLocationAdapter.getCurrentLocation();
-            System.out.println(locaux);
+            System.out.println("Location adapter: "+locaux);
             if(!room.getCheckpoints().isEmpty())
             {
                     listCheck = room.getCheckpoints();
-                   for(int i =0; i<listCheck.size(); i++){
-                       locaux.distanceBetween(listCheck.get(i).getLatitude(),listCheck.get(i).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
-                       childText.concat(" Distance: "+res[0]);
-                   }
+                       Location locx = new Location("");
+                        locx.setLatitude(listCheck.get(0).getLatitude());
+                        System.out.println("Latitude: "+listCheck.get(0).getLatitude());
+                        locx.setLongitude(listCheck.get(0).getLongitude());
+                        System.out.println("Latitude: "+listCheck.get(0).getLongitude());
+                        locaux.distanceTo(locx);
+                       locaux.distanceBetween(listCheck.get(0).getLatitude(),listCheck.get(0).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
+
+                        TextView childDistance = (TextView) convertView
+                        .findViewById(R.id.room_distance);
+                        childDistance.setText("Distance: "+locaux.distanceTo(locx));
             }
 
         }catch(Exception e){
             e.printStackTrace();
-        }*/
+        }
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
+
 
         txtListChild.setText(childText);
         return convertView;
