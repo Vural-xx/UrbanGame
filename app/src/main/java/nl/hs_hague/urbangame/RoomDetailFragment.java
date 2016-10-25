@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -77,6 +78,7 @@ public class RoomDetailFragment extends Fragment {
 
         if (currentRoom != null) {
 
+            final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
             ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
             ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
             bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
@@ -97,6 +99,8 @@ public class RoomDetailFragment extends Fragment {
                         user.setUsername(RoomListActivity.firebaseAuth.getCurrentUser().getDisplayName());
                         currentRoom.getMembers().add(user);
                         RoomListActivity.databaseHandler.createRoom(currentRoom);
+                        roomDetail.setVisibility(View.INVISIBLE);
+
                     }
                 });
             }
