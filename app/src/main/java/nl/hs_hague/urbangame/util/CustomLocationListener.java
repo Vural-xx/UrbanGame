@@ -51,12 +51,11 @@ public class CustomLocationListener implements LocationListener {
         alt = location.getAltitude();
         speed = location.getSpeed();
         System.out.println("Location changed");
-        checkRoomMatch();
+       // checkRoomMatch();
     }
 
     public void checkRoomMatch(){
         List<Room> rooms =RoomListActivity.rooms.get(RoomListActivity.HEADER_STARTED_ROOMS);
-
 
         for(Room r : rooms){
             for(Checkpoint c: r.getCheckpoints()){

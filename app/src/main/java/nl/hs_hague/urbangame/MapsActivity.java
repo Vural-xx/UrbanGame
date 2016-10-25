@@ -131,9 +131,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Once the map is ready we can do some stuff, here I am adding a listener in order to add a new marker
      **/
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            mMap = googleMap;
+
 
         System.out.println("Im in onMapReady");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
