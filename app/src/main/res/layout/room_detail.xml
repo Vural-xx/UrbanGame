@@ -1,6 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/room_detail_holder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -32,56 +33,91 @@
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/detail_padding">
 
-                    <TextView
-                        style="?android:attr/textAppearanceLarge"
+                    <TableLayout
+                        android:id="@+id/roomDetailTable"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="Name:  "
-                        android:layout_width="match_parent" />
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginRight="5dip"
+                        android:paddingLeft="3dip"
+                        android:paddingRight="3dip"
+                        android:shrinkColumns="1"
+                        android:stretchColumns="*"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal">
 
-                    <TextView
-                        android:id="@+id/room_detail"
-                        style="?android:attr/textAppearanceLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        <TableRow>
 
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp" />
+                            <TextView
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_height="wrap_content"
+                                android:text="@string/name_label"
+                                android:layout_gravity="fill"/>
 
-                    <TextView
-                        style="?android:attr/textAppearanceLarge"
-                        android:layout_height="wrap_content"
-                        android:text="@string/description_label"
-                        android:layout_width="match_parent" />
+                            <TextView
+                                android:id="@+id/room_detail"
+                                android:layout_gravity="fill"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        </TableRow>
 
-                    <TextView
-                        android:id="@+id/room_description"
-                        style="?android:attr/textAppearanceLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        <TableRow>
 
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp" />
+                            <TextView
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_height="wrap_content"
+                                android:text="@string/description_label"
+                                android:layout_gravity="fill"
+                                />
 
-                    <Button
-                        android:id="@+id/btn_join_room"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/join_room"
-                        android:gravity="center"
-                        android:layout_gravity="center" />
+                            <TextView
+                                android:id="@+id/room_description"
+                                android:layout_gravity="fill"
+                                android:text="Hallo hier kommt die Beschreibung"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        </TableRow>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/hints_text"
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp" />
+
+                        <TableRow>
+
+                            <TextView
+                                android:id="@+id/hints_label"
+                                android:layout_gravity="fill"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:id="@+id/hints_text"
+                                android:layout_gravity="fill"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_marginTop="50dp">
+                            <TextView
+                                android:layout_gravity="fill"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+                            <Button
+                                android:id="@+id/btn_join_room"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:text="@string/join_room"/>
+                        </TableRow>
+
+                    </TableLayout>
 
                     <fragment
                         android:layout_width="match_parent"
@@ -111,6 +147,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
+                    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/lvFoundCheckpoints"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"/>
 
                 </LinearLayout>
             </FrameLayout>

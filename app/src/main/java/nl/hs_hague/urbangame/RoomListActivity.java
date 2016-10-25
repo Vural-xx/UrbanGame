@@ -1,6 +1,7 @@
 package nl.hs_hague.urbangame;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
@@ -25,6 +27,14 @@ import android.widget.ExpandableListView;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,21 +53,25 @@ import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 import nl.hs_hague.urbangame.util.CustomLocationListener;
+import nl.hs_hague.urbangame.util.GeofenceTrasitionService;
 
-public class RoomListActivity extends AppCompatActivity  {
+public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private boolean mTwoPane;
     ExpandableRoomAdapter roomAdapter;
     ExpandableListView lvRooms;
     List<String> roomsHeader;
-    HashMap<String, List<Room>> rooms;
+    public static  HashMap<String, List<Room>> rooms;
     private Context context = null;
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
     private String searchQuery;
-
+    public static final String HEADER_STARTED_ROOMS = "Started Rooms";
+    public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
+    public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
+    private  GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +157,7 @@ public class RoomListActivity extends AppCompatActivity  {
                 return false;
             }
         });
-
+        startGeofence();
 
     }
 
@@ -242,10 +256,9 @@ public class RoomListActivity extends AppCompatActivity  {
     public void prepareListData() {
         roomsHeader = new ArrayList<String>();
         rooms = new HashMap<String, List<Room>>();
-        roomsHeader.add("Started Rooms");
-        roomsHeader.add("Public Rooms");
-        roomsHeader.add("Own Rooms");
-
+        roomsHeader.add(HEADER_STARTED_ROOMS);
+        roomsHeader.add(HEADER_PUBLIC_ROOMS);
+        roomsHeader.add(HEADER_OWN_ROOMS);
 
         databaseHandler = new DatabaseHandler();
 
@@ -328,7 +341,66 @@ public class RoomListActivity extends AppCompatActivity  {
         }
     }
 
+    public void startGeofence(){
+         mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+
+    }
 
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Geofence geofence = new Geofence.Builder()
+                .setRequestId("TEST")
+                .setCircularRegion(33, -84, 100)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setNotificationResponsiveness(1000)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build();
+
+        GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build();
+
+        Intent intent = new Intent(this, GeofenceTrasitionService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            getPermission();
+            return;
+        }
+
+        LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, geofencingRequest,pendingIntent).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+                if (status.isSuccess()){
+                    Log.d("RoomListActivity", "Successfully added geofence");
+                }else if(!status.isSuccess()){
+                    Log.d("RoomListActivity", "Couldnt add geofence");
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
 }
 

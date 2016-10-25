@@ -41,7 +41,7 @@ import nl.hs_hague.urbangame.model.CheckpointHolder;
 
 import static java.lang.Thread.sleep;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener, Serializable, Runnable {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, MarkersFragment.MakersFragmentListener, Serializable {
 
     private GoogleMap mMap; //The map that we will show
     private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
@@ -108,12 +108,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     doneButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        /*You can get the markers with the getMarkers method
-                         It returns a List of addresses, in order to get the name of the marker just use the method getTitle()
-                         In order to get the coordenates use the method getPosition and it returns a LatLng object and you can get the coordenates with that object
-                         with the methods getLatitude() and getLongitude
-
-                         */
                             retrieveMarkers();
                         }
                     });
@@ -128,7 +122,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putSerializable(SAVED_GAME, MapsActivity.this);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
     /**
      * Once the map is ready we can do some stuff, here I am adding a listener in order to add a new marker
      **/
@@ -175,45 +175,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient); //Getting the current location
 
-        android.location.LocationListener listener = new android.location.LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                Location mCurrentLocation = location;
-
-
-                String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-                if(checkCounter<idMarkers.size()) {
-                    if ((mCurrentLocation.getLatitude() == idMarkers.get(checkCounter).getPosition().latitude) && (mCurrentLocation.getLongitude() == idMarkers.get(checkCounter).getPosition().longitude))
-                    {
-                        Toast.makeText(context,"You reached a checkpoint counter: "+checkCounter,Toast.LENGTH_SHORT).show();
-                        checkCounter++;
-                    }
-                }
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,5,listener);
-
 
         if (mLastLocation != null) {
             cLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //Getting the coordenates
-            // mMap.addMarker(new MarkerOptions().position(cLocation).title("Marker in Den Haag")); //Adding a new marker in our current location
             mMap.moveCamera(CameraUpdateFactory.newLatLng(cLocation)); //Moving the camera to our current location
             mMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
             try {
@@ -221,7 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mess = "Your address is:";
                 Toast.makeText(this, mess + resAddress.get(0).getAddressLine(0) + " " + resAddress.get(0).getPostalCode(),
                         Toast.LENGTH_LONG).show();
-                //addMarkers("Jumbo","The Hague");
 
                 mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
@@ -239,7 +202,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             //Getting our current locality
                             markersAddress = geo.getFromLocation(cLocation.latitude, cLocation.longitude, 2);
                             cLocality = markersAddress.get(0).getLocality();
-                           // mess = "Marker1";
+
                             if (cLocality.equals(mLocality)) {
                                 if (counterMarkers < maxMarkers) {
                                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
@@ -249,8 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         public boolean onMarkerClick(Marker arg0) {
 
                                             showNoticeDialog(arg0.getId());
-                                            /*Thread thread = new Thread();
-                                            thread.start();*/
+
                                             int i = 0;
                                             try {
 
@@ -306,74 +268,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
+    public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
-    }
-
-   /* public void addMarkers(String place, String locality) {
-        double latitude, longitude;
-        try {
-
-            markersAddress = geo.getFromLocationName(place + locality, 10); //Ypu have to define how many results you want, in this case they are only 10
-            mess = "Your coordenates are:";
-
-            try {
-
-                // Adding the markers with the results
-                for (int i = 0; i < markersAddress.size(); i++) {
-                    latitude = markersAddress.get(i).getLatitude();
-                    longitude = markersAddress.get(i).getLongitude();
-                    Toast.makeText(this, String.valueOf(latitude) + " " + String.valueOf(longitude) + " " + markersAddress.get(i).getLocality(),
-                            Toast.LENGTH_LONG).show();
-                    cLocation = new LatLng(latitude, longitude);
-                    markers.add(cLocation);
-                }
-                for (int i = 0; i < markers.size(); i++) {
-                    mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("Jumbo no: " + i));
-                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker arg0) {
-                            showNoticeDialog();
-                            try {
-
-                                arg0.setTitle(mess);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            return true;
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-*/
     /*I have not tried this method yet but it is supposed to compare your current location with all the coordenates that are saverd as a marker*/
     @Override
     public void onLocationChanged(Location location) {
-        /*Location mCurrentLocation = location;
-        String success = "You have reached a checkpoint";
-        cLocation = new LatLng(location.getLatitude(), location.getLongitude()); //Getting the coordenates
-
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(cLocation)); //Moving the camera to our current location
-       // mMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
-
-        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        for (int i = 0; i < idMarkers.size(); i++) {
-            if ((mCurrentLocation.getLatitude() == idMarkers.get(i).getPosition().latitude) && (mCurrentLocation.getLongitude() == idMarkers.get(i).getPosition().longitude))
-                Toast.makeText(this, success + " time: " + mLastUpdateTime,
-                        Toast.LENGTH_LONG).show();
-        }*/
     }
 
     @Override
@@ -388,14 +290,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else if(names.size() > idReceived){
             System.out.println("I entered to the else part"+ name+hint);
-            names.get(idReceived).replace(names.get(idReceived),name);
-            hints.get(idReceived).replace(hints.get(idReceived),hint);
+            names.set(idReceived,name);
+            hints.set(idReceived,hint);
         }
     }
 
-    public List<Address> getMarkers() {
-        return markersAddress;
-    }
 
     private void getPermission() {
         ActivityCompat.requestPermissions(this,
@@ -488,21 +387,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public int getCheckCounter(){
         return checkCounter;
     }
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putSerializable(SAVED_GAME, MapsActivity.this);
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-    }
 
-    @Override
-    public void run() {
-        try {
-            sleep(30000);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+
 }
