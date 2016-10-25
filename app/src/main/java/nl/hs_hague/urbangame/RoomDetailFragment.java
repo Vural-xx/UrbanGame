@@ -115,11 +115,14 @@ public class RoomDetailFragment extends Fragment {
 
     public List<User> getMembersWithoutCurrentUser(){
         List<User> users = new ArrayList<>();
-        for(User u: currentRoom.getMembers()){
-            if(!u.getUuid().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
-                users.add(u);
+        if(currentRoom.getMembers() != null){
+            for(User u: currentRoom.getMembers()){
+                if(!u.getUuid().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+                    users.add(u);
+                }
             }
         }
+
         return users;
     }
 

@@ -61,13 +61,15 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     ExpandableRoomAdapter roomAdapter;
     ExpandableListView lvRooms;
     List<String> roomsHeader;
-    HashMap<String, List<Room>> rooms;
+    public static  HashMap<String, List<Room>> rooms;
     private Context context = null;
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
     private String searchQuery;
-
+    public static final String HEADER_STARTED_ROOMS = "Started Rooms";
+    public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
+    public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
     private  GoogleApiClient mGoogleApiClient;
 
@@ -254,10 +256,9 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     public void prepareListData() {
         roomsHeader = new ArrayList<String>();
         rooms = new HashMap<String, List<Room>>();
-        roomsHeader.add("Started Rooms");
-        roomsHeader.add("Public Rooms");
-        roomsHeader.add("Own Rooms");
-
+        roomsHeader.add(HEADER_STARTED_ROOMS);
+        roomsHeader.add(HEADER_PUBLIC_ROOMS);
+        roomsHeader.add(HEADER_OWN_ROOMS);
 
         databaseHandler = new DatabaseHandler();
 

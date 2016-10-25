@@ -35,7 +35,7 @@ public class FoundCheckpointAdapter extends ArrayAdapter<Checkpoint> {
         if (convertView == null) {
             convertView = inflater.inflate(resource, null);
         }
-        TextView tvRoomName = (TextView) convertView.findViewById(R.id.markerTitle);
+        TextView tvRoomName = (TextView) convertView.findViewById(R.id.checkpoint_hint);
         final Checkpoint checkpoint = (Checkpoint) checkpoints.get(position);
         tvRoomName.setText(checkpoint.getName() + " Hint: " + checkpoint.getHint());
         notifyDataSetChanged();

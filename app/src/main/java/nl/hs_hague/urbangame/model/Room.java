@@ -108,7 +108,7 @@ public class Room implements Serializable {
             if (checkpoints.get(i).getFoundBy() == null){
                 checkpoints.get(i).setFoundBy(new ArrayList<String>());
             }
-            for(int j = 0 ; i < checkpoints.get(i).getFoundBy().size(); j++){
+            for(int j = 0 ; j < checkpoints.get(i).getFoundBy().size(); j++){
                 if(checkpoints.get(i).getFoundBy().get(j).equals(uuid) && !found){
                     currentCheckpoint = checkpoints.get(i);
                     found = true;
@@ -126,14 +126,14 @@ public class Room implements Serializable {
     }
 
     public List<Checkpoint> foundCheckPoints(String uuid){
-        List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
+        List<Checkpoint> tempCheckpoints = new ArrayList<Checkpoint>();
         for(int i = 0; i < checkpoints.size(); i++){
-            for(int j = 0 ; i < checkpoints.get(i).getFoundBy().size(); j++){
+            for(int j = 0 ; j < checkpoints.get(i).getFoundBy().size(); j++){
                 if(checkpoints.get(i).getFoundBy().get(j).equals(uuid)){
-                    checkpoints.add(checkpoints.get(i));
+                    tempCheckpoints.add(checkpoints.get(i));
                 }
             }
         }
-        return checkpoints;
+        return tempCheckpoints;
     }
 }
