@@ -58,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int maxMarkers = 10;
     private int counterMarkers;
     String mess;
+    private Button doneButton;
     private List<String> hints = new ArrayList<String>(10);
     private List<String> names = new ArrayList<String>(10);
     LocationRequest locationRequest;
@@ -86,25 +87,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             markersAddress = game.getMarkersAddress();
             markers = game.getMarkersList();
             geo = game.getGeo();
+            names = game.getNames();
+            hints = game.getHints();
             counterMarkers = game.getCounterMarkers();
-            mMap = game.getmMap();
+            doneButton = (Button) findViewById(R.id.doneButton);
+
             mGoogleApiClient = game.getmGoogleApiClient();
             mess = game.getMess();
 
-            for(int i=0; i<idMarkers.size(); i++){
-                System.out.println("Restaurando marcadores");
-                System.out.println("Marcadores: "+counterMarkers);
-                System.out.println("Coordenadas: "+idMarkers.get(i).getPosition());
-                mMap.addMarker(new MarkerOptions().position(idMarkers.get(i).getPosition()).title(idMarkers.get(i).getTitle()));
-            }
-
-        }else {
+        }
+        else {
                     geo = new Geocoder(this);
                     markers = new ArrayList<LatLng>();
                     idMarkers = new ArrayList<Marker>();
                     counterMarkers = 0;
                     context = this;
-                    Button doneButton = (Button) findViewById(R.id.doneButton);
+                    doneButton = (Button) findViewById(R.id.doneButton);
                     doneButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -126,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putSerializable(SAVED_GAME, MapsActivity.this);
+
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -136,13 +135,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
+        System.out.println("Im in onMapReady");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             getPermission();
             return;
         }
         mMap.setMyLocationEnabled(true);
+        try {
+            if (counterMarkers > 0) {
+                for (int i = 0; i < idMarkers.size(); i++) {
+                    mMap.addMarker(new MarkerOptions().position(idMarkers.get(i).getPosition()).title(idMarkers.get(i).getTitle()));
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retrieveMarkers();
+            }
+        });
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                System.out.println("I added the click listener");
+                mapLongListener(latLng);
+            }
+        });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                return markerClick(arg0);
+            }
+        });
     }
 
     /*Mandatory methods*/
@@ -165,6 +193,77 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dialog.setArguments(arguments);
         dialog.show(getSupportFragmentManager(), "Add a name to your marker");
     }
+    /******/
+    void mapLongListener(LatLng latLng){
+            int index = 0;
+            String cLocality, mLocality;
+            markers.add(latLng);
+
+            index = markers.size();
+            try {
+                //Getting the locality of the potential marker
+                markersAddress = geo.getFromLocation(latLng.latitude, latLng.longitude, 2);
+                mLocality = markersAddress.get(0).getLocality();
+                //Getting our current locality
+                markersAddress = geo.getFromLocation(cLocation.latitude, cLocation.longitude, 2);
+                cLocality = markersAddress.get(0).getLocality();
+
+                if (cLocality.equals(mLocality)) {
+                    if (counterMarkers < maxMarkers) {
+                        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
+                        counterMarkers++;
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker arg0) {
+                                return markerClick(arg0);
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(context, "You can not add more markers", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "You can not add marker out of your current city", Toast.LENGTH_SHORT).show();
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }
+
+    /********/
+    public boolean markerClick(Marker arg0){
+            showNoticeDialog(arg0.getId());
+            int i = 0;
+            try {
+
+                if (idMarkers.isEmpty() == true) {
+                    idMarkers.add(arg0);
+
+                }
+                do {
+                    if (arg0.equals(idMarkers.get(i))) {
+                        if (!mess.equals(""))
+                            idMarkers.get(i).setTitle(mess);
+
+                        mess = "";
+                        break;
+                    }
+                    i++;
+                } while (i < idMarkers.size());
+                if (i == idMarkers.size()) {
+                    idMarkers.add(arg0);
+                    if (!mess.equals(""))
+                        idMarkers.get(i).setTitle(mess);
+                    mess = "";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+    }
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -190,72 +289,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     @Override
                     public void onMapLongClick(LatLng latLng) {
-                        int index = 0;
-                        String cLocality, mLocality;
-                        markers.add(latLng);
-
-                        index = markers.size();
-                        try {
-                            //Getting the locality of the potential marker
-                            markersAddress = geo.getFromLocation(latLng.latitude, latLng.longitude, 2);
-                            mLocality = markersAddress.get(0).getLocality();
-                            //Getting our current locality
-                            markersAddress = geo.getFromLocation(cLocation.latitude, cLocation.longitude, 2);
-                            cLocality = markersAddress.get(0).getLocality();
-
-                            if (cLocality.equals(mLocality)) {
-                                if (counterMarkers < maxMarkers) {
-                                    mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
-                                    counterMarkers++;
-                                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                        @Override
-                                        public boolean onMarkerClick(Marker arg0) {
-
-                                            showNoticeDialog(arg0.getId());
-
-                                            int i = 0;
-                                            try {
-
-                                                if (idMarkers.isEmpty() == true) {
-                                                    idMarkers.add(arg0);
-
-                                                }
-                                                do {
-                                                    if (arg0.equals(idMarkers.get(i))) {
-                                                        if (!mess.equals(""))
-                                                            idMarkers.get(i).setTitle(mess);
-
-                                                        mess = "";
-                                                        break;
-                                                    }
-                                                    i++;
-                                                } while (i < idMarkers.size());
-                                                if (i == idMarkers.size()) {
-                                                    idMarkers.add(arg0);
-                                                    if (!mess.equals(""))
-                                                        idMarkers.get(i).setTitle(mess);
-                                                    mess = "";
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            return true;
-                                        }
-                                    });
-
-                                } else {
-                                    Toast.makeText(context, "You can not add more markers", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(context, "You can not add marker out of your current city", Toast.LENGTH_SHORT).show();
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-
+                        System.out.println("I added the click listener");
+                        mapLongListener(latLng);
                     }
                 });
                 /*Showing the current location**/
@@ -342,6 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < idMarkers.size(); i++){
 
             idMarkers.get(i).setTitle(names.get(i));
+
             Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
             checkpoint.setHint(hints.get(i));
             checkpointHolder.getCheckpoints().add(checkpoint);
@@ -351,6 +387,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         finish();
     }
 
+
+
+
+    /*******/
     public List<Address> getMarkersAddress(){
         return markersAddress;
     }
@@ -384,9 +424,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public String getMess(){
         return mess;
     }
+    public Button getDoneButton(){return doneButton;}
     public int getCheckCounter(){
         return checkCounter;
     }
+    public List<String> getNames(){return names;}
+    public List<String> getHints(){return hints;}
 
 
 }
