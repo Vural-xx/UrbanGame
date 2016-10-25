@@ -1,6 +1,7 @@
 package nl.hs_hague.urbangame.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -97,5 +98,30 @@ public class Room implements Serializable {
             hints=hints+mycheck.getHint()+"\n";
         }
         return hints;
+    }
+
+    public Checkpoint getCurrentCheckpoint(String uuid){
+        Checkpoint currentCheckpoint = null;
+        Boolean found = false;
+
+        for(int i = 0; i < checkpoints.size(); i++){
+            if (checkpoints.get(i).getFoundBy() == null){
+                checkpoints.get(i).setFoundBy(new ArrayList<String>());
+            }
+            for(int j = 0 ; i < checkpoints.get(i).getFoundBy().size(); j++){
+                if(checkpoints.get(i).getFoundBy().get(j).equals(uuid) && !found){
+                    currentCheckpoint = checkpoints.get(i);
+                    found = true;
+                }
+            }
+        }
+        if(currentCheckpoint == null){
+            currentCheckpoint = checkpoints.get(0);
+        }
+        return currentCheckpoint;
+    }
+
+    public void foundCheckpoint(String uuid){
+        getCurrentCheckpoint(uuid).getFoundBy().add(uuid);
     }
 }

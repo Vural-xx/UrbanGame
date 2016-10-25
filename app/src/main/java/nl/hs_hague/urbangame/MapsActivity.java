@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<String> hints = new ArrayList<String>(10);
     private List<String> names = new ArrayList<String>(10);
     LocationRequest locationRequest;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final String SAVED_GAME = "savedGame";
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
@@ -132,18 +132,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Once the map is ready we can do some stuff, here I am adding a listener in order to add a new marker
      **/
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            mMap = googleMap;
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            getPermission();
-            return;
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                getPermission();
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
+
         }
-        mMap.setMyLocationEnabled(true);
-
-    }
 
     /*Mandatory methods*/
     protected void onStart() {
@@ -386,7 +386,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             names.add(name);
             hints.add(hint);
         }
-        else{
+        else if(names.size() > idReceived){
+            System.out.println("I entered to the else part"+ name+hint);
             names.get(idReceived).replace(names.get(idReceived),name);
             hints.get(idReceived).replace(hints.get(idReceived),hint);
         }
