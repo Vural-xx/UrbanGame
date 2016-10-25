@@ -83,6 +83,7 @@ public class RoomDetailFragment extends Fragment {
             if(currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)){
                 bntJoinRoom.setVisibility(View.INVISIBLE);
                 ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
+                ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
             }else{
                 bntJoinRoom.setOnClickListener(new View.OnClickListener() {
                     @Override
