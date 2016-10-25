@@ -68,20 +68,14 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
             CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
             Location locaux = objCurrentLocationAdapter.getCurrentLocation();
             System.out.println("Location adapter: "+locaux);
-            if(!room.getCheckpoints().isEmpty())
+            if((!room.getCheckpoints().isEmpty()) && (groupPosition == 1))
             {
                     listCheck = room.getCheckpoints();
-                       Location locx = new Location("");
-                        locx.setLatitude(listCheck.get(0).getLatitude());
-                        System.out.println("Latitude: "+listCheck.get(0).getLatitude());
-                        locx.setLongitude(listCheck.get(0).getLongitude());
-                        System.out.println("Latitude: "+listCheck.get(0).getLongitude());
-                        locaux.distanceTo(locx);
                        locaux.distanceBetween(listCheck.get(0).getLatitude(),listCheck.get(0).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
 
                         TextView childDistance = (TextView) convertView
                         .findViewById(R.id.room_distance);
-                        childDistance.setText("Distance: "+locaux.distanceTo(locx));
+                        childDistance.setText("Distance: "+res[0]);
             }
 
         }catch(Exception e){
