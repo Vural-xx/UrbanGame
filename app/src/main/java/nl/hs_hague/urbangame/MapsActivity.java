@@ -237,24 +237,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean markerClick(Marker arg0){
             showNoticeDialog(arg0.getId());
             int i = 0;
+            char modified='f';
             try {
 
                 if (idMarkers.isEmpty() == true) {
                     idMarkers.add(arg0);
-
                 }
                 do {
-                    if (arg0.equals(idMarkers.get(i))) {
+
+                    if (arg0.getId().equals(idMarkers.get(i).getId())) {
                         if (!mess.equals(""))
                             idMarkers.get(i).setTitle(mess);
-
+                         modified = 't';
                         mess = "";
+                        System.out.println("Id marker clicked two:"+ arg0.getId()+ " "+ idMarkers.get(i).getId());
                         break;
                     }
+
                     i++;
-                } while (i < idMarkers.size());
-                if (i == idMarkers.size()) {
+                } while (i < idMarkers.size() );
+                if (modified == 'f') {
                     idMarkers.add(arg0);
+                    System.out.println("Agregue otro: " + i + modified);
                     if (!mess.equals(""))
                         idMarkers.get(i).setTitle(mess);
                     mess = "";
