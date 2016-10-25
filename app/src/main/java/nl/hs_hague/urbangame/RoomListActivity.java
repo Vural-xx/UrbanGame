@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -53,7 +54,8 @@ import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 import nl.hs_hague.urbangame.util.CustomLocationListener;
-import nl.hs_hague.urbangame.util.GeofenceTrasitionService;
+import nl.hs_hague.urbangame.util.GeofenceReceiver;
+import nl.hs_hague.urbangame.util.YourReceiver;
 
 public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -72,6 +74,7 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
     private  GoogleApiClient mGoogleApiClient;
+    private GeofencingRequest geofencingRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,19 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
         CustomLocationListener locationListener = new CustomLocationListener();
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
+        IntentFilter intentFilter = new IntentFilter("ACTION_PROXIMITY_ALERT");
+        registerReceiver(new YourReceiver(), intentFilter);
+        // 100 meter radius
+        float radius = 100f;
+        // Expiration is 10 Minutes
+        long expiration = 600000;
+
+        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Intent geoIntent = new Intent("ACTION_PROXIMITY_ALERT");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        locManager.addProximityAlert(-84, 33, radius, expiration, pendingIntent);
+
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -356,26 +372,28 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     public void onConnected(@Nullable Bundle bundle) {
         Geofence geofence = new Geofence.Builder()
                 .setRequestId("TEST")
-                .setCircularRegion(33, -84, 100)
+                .setCircularRegion(33, -84, 1000)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setNotificationResponsiveness(1000)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
 
-        GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+        geofencingRequest = new GeofencingRequest.Builder()
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .addGeofence(geofence)
                 .build();
 
-        Intent intent = new Intent(this, GeofenceTrasitionService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+       // Intent intent = new Intent(this, GeofenceTrasitionService.class);
+       // PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             getPermission();
             return;
         }
 
-        LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, geofencingRequest,pendingIntent).setResultCallback(new ResultCallback<Status>() {
+
+
+        LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, geofencingRequest,getGeofenceTransitionPendingIntent()).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status status) {
                 if (status.isSuccess()){
@@ -401,6 +419,15 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+    }
+
+    /**
+     * Create a PendingIntent that triggers GeofenceTransitionIntentService when a geofence
+     * transition occurs.
+     */
+    private PendingIntent getGeofenceTransitionPendingIntent() {
+        Intent intent = new Intent(this, GeofenceReceiver.class);
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
 

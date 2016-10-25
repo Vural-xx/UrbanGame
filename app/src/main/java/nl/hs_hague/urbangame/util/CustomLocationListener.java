@@ -51,7 +51,7 @@ public class CustomLocationListener implements LocationListener {
         alt = location.getAltitude();
         speed = location.getSpeed();
         System.out.println("Location changed");
-       // checkRoomMatch();
+        //checkRoomMatch();
     }
 
     public void checkRoomMatch(){
@@ -82,4 +82,5 @@ public class CustomLocationListener implements LocationListener {
     public void onProviderEnabled(String provider) {}
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}
+
 }

@@ -64,6 +64,7 @@ public class GeofenceTrasitionService extends IntentService {
 
     // Create a detail message with Geofences received
     private String getGeofenceTrasitionDetails(int geoFenceTransition, List<Geofence> triggeringGeofences) {
+        Log.d("NOTIFICATION", "entered geofence");
         // get the ID of each geofence triggered
         ArrayList<String> triggeringGeofencesList = new ArrayList<>();
         for ( Geofence geofence : triggeringGeofences ) {
@@ -80,6 +81,7 @@ public class GeofenceTrasitionService extends IntentService {
 
     // Send a notification
     private void sendNotification( String msg ) {
+        Log.d("NOTIFICATION", "entered geofence");
         Log.i(TAG, "sendNotification: " + msg );
 
         // Intent to start the main Activity
