@@ -75,7 +75,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
                         TextView childDistance = (TextView) convertView
                         .findViewById(R.id.room_distance);
-                        childDistance.setText("Distance: "+res[0]);
+                        childDistance.setText("Distance: "+(int)res[0]+" meters");
             }
 
         }catch(Exception e){
