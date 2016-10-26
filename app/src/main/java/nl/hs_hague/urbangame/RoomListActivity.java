@@ -5,14 +5,12 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
@@ -28,14 +26,6 @@ import android.widget.ExpandableListView;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,13 +41,12 @@ import java.util.Set;
 import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
+import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 import nl.hs_hague.urbangame.util.CustomLocationListener;
-import nl.hs_hague.urbangame.util.GeofenceReceiver;
-import nl.hs_hague.urbangame.util.YourReceiver;
 
-public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class RoomListActivity extends AppCompatActivity{
 
     private boolean mTwoPane;
     ExpandableRoomAdapter roomAdapter;
@@ -73,8 +62,9 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
-    private  GoogleApiClient mGoogleApiClient;
-    private GeofencingRequest geofencingRequest;
+    private  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
+    private LocationManager locationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,25 +79,12 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
             return;
         }
 
-        LocationManager locationManager = (LocationManager)
+        locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
 
         CustomLocationListener locationListener = new CustomLocationListener();
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-
-        IntentFilter intentFilter = new IntentFilter("ACTION_PROXIMITY_ALERT");
-        registerReceiver(new YourReceiver(), intentFilter);
-        // 100 meter radius
-        float radius = 100f;
-        // Expiration is 10 Minutes
-        long expiration = 600000;
-
-        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Intent geoIntent = new Intent("ACTION_PROXIMITY_ALERT");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        locManager.addProximityAlert(-84, 33, radius, expiration, pendingIntent);
-
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -173,7 +150,6 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
                 return false;
             }
         });
-        startGeofence();
 
     }
 
@@ -314,6 +290,7 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
 
                                 }
                             }
+
                             rooms.put(roomsHeader.get(0), new ArrayList<Room>(startedSet));
                             roomAdapter.updateRooms(new ArrayList<Room>(startedSet), 0);
                             rooms.put(roomsHeader.get(1), new ArrayList<Room>(publicSet));
@@ -321,6 +298,7 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
                             rooms.put(roomsHeader.get(2), new ArrayList<Room>(ownSet));
                             roomAdapter.updateRooms(new ArrayList<Room>(ownSet), 2);
                             lvRooms.expandGroup(0);
+                            setCheckpointAlerts();
                         }
 
                         @Override
@@ -357,77 +335,33 @@ public class RoomListActivity extends AppCompatActivity  implements OnMapReadyCa
         }
     }
 
-    public void startGeofence(){
-         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
 
+    public void setCheckpointAlerts(){
+        List<Room> publicRooms = rooms.get(HEADER_STARTED_ROOMS);
+        for(Room r: publicRooms){
+            for(Checkpoint c: r.foundCheckPoints(firebaseAuth.getCurrentUser().getUid())){
+                if(!alertedCheckpoints.contains(c)){
+                    addCheckpointAlert(c);
+                }
+            }
+        }
     }
 
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Geofence geofence = new Geofence.Builder()
-                .setRequestId("TEST")
-                .setCircularRegion(33, -84, 1000)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setNotificationResponsiveness(1000)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build();
-
-        geofencingRequest = new GeofencingRequest.Builder()
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-                .addGeofence(geofence)
-                .build();
-
-       // Intent intent = new Intent(this, GeofenceTrasitionService.class);
-       // PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-
+    public void addCheckpointAlert(Checkpoint checkpoint){
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             getPermission();
             return;
         }
+        // 100 meter radius
+        float radius = 100f;
+        // Expiration is 10 Minutes
+        long expiration = 600000;
+        Intent geoIntent = new Intent("ACTION_PROXIMITY_ALERT");
+        geoIntent.putExtra("checkpoint", checkpoint);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_ONE_SHOT);
+        locationManager.addProximityAlert(checkpoint.getLatitude(), checkpoint.getLongitude(), radius, expiration, pendingIntent);
+        alertedCheckpoints.add(checkpoint);
 
-
-
-        LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, geofencingRequest,getGeofenceTransitionPendingIntent()).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(@NonNull Status status) {
-                if (status.isSuccess()){
-                    Log.d("RoomListActivity", "Successfully added geofence");
-                }else if(!status.isSuccess()){
-                    Log.d("RoomListActivity", "Couldnt add geofence");
-                }
-            }
-        });
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-    }
-
-    /**
-     * Create a PendingIntent that triggers GeofenceTransitionIntentService when a geofence
-     * transition occurs.
-     */
-    private PendingIntent getGeofenceTransitionPendingIntent() {
-        Intent intent = new Intent(this, GeofenceReceiver.class);
-        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
 

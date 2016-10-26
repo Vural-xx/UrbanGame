@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.widget.Toast;
 
+import nl.hs_hague.urbangame.model.Checkpoint;
+
 /**
  * Created by vural on 26.10.16.
  */
@@ -15,12 +17,7 @@ public class YourReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         final String key = LocationManager.KEY_PROXIMITY_ENTERING;
-        final Boolean entering = intent.getBooleanExtra(key, false);
-
-        if (entering) {
-            Toast.makeText(context, "entering", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "exiting", Toast.LENGTH_SHORT).show();
-        }
+        Checkpoint checkpoint = (Checkpoint) intent.getSerializableExtra("checkpoint");
+        Toast.makeText(context, "Congratulations you found the checkpoint", Toast.LENGTH_SHORT).show();
     }
 }
