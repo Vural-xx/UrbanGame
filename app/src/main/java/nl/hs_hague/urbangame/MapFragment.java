@@ -2,13 +2,21 @@ package nl.hs_hague.urbangame;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -18,10 +26,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import nl.hs_hague.urbangame.adapter.CurrentLocationAdapter;
+
 /////////////////////////////////////////////////////////
 public class MapFragment extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
+    private Location locaux;
+    private LatLng hague;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +51,10 @@ public class MapFragment extends Fragment {
             e.printStackTrace();
         }
 
+        CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(this.getContext());
+        locaux = objCurrentLocationAdapter.getCurrentLocation();
+
+
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
@@ -50,7 +66,7 @@ public class MapFragment extends Fragment {
                 // For showing a move to my location button
                 googleMap.setMyLocationEnabled(true);
 
-                LatLng hague = new LatLng(52.0665,4.32373);
+                hague = new LatLng(locaux.getLatitude(),locaux.getLongitude());
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(hague).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -89,4 +105,6 @@ public class MapFragment extends Fragment {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
+
 }

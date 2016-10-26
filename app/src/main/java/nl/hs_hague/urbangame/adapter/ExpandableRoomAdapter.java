@@ -11,10 +11,13 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import nl.hs_hague.urbangame.R;
+import nl.hs_hague.urbangame.RoomListActivity;
+import nl.hs_hague.urbangame.comparator.RoomComparator;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 
@@ -28,18 +31,31 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     private List<String> listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<Room>> listDataChild;
-    private List<Checkpoint> listCheck;
     private float[] res;
 
     public ExpandableRoomAdapter(Context context, List<String> listDataHeader) {
         this._context = context;
         this.listDataHeader = listDataHeader;
-        listCheck = new ArrayList<Checkpoint>();
         res = new float[20];
         listDataChild = new HashMap<String, List<Room>>();
         for(int i = 0; i < listDataHeader.size(); i++){
             listDataChild.put(listDataHeader.get(i), new ArrayList<Room>());
         }
+
+    }
+
+
+    public void calculateDistance(){
+        List<Room> publicRooms = listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS);
+        CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
+        Location locaux = objCurrentLocationAdapter.getCurrentLocation();
+        for(int i=0; i<publicRooms.size(); i++) {
+            if (!publicRooms.get(i).getCheckpoints().isEmpty()) {
+                locaux.distanceBetween(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), locaux.getLatitude(), locaux.getLongitude(), res);
+                publicRooms.get(i).setDistance((int) res[0]);
+            }
+        }
+        Collections.sort(publicRooms, new RoomComparator());
     }
 
     @Override
@@ -59,33 +75,23 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         Room room = (Room)getChild(groupPosition,childPosition);
 
          String childText = (String) room.getName();
+
+
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.room_list_content, null);
         }
-        try{
-            CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
-            Location locaux = objCurrentLocationAdapter.getCurrentLocation();
-            System.out.println("Location adapter: "+locaux);
-            if((!room.getCheckpoints().isEmpty()) && (groupPosition == 1))
-            {
-                    listCheck = room.getCheckpoints();
-                       locaux.distanceBetween(listCheck.get(0).getLatitude(),listCheck.get(0).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
 
-                        TextView childDistance = (TextView) convertView
-                        .findViewById(R.id.room_distance);
-                        childDistance.setText("Distance: "+(int)res[0]+" meters");
-            }
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
-
-
         txtListChild.setText(childText);
+        if(groupPosition == 1) {
+            TextView childDistance = (TextView) convertView
+                    .findViewById(R.id.room_distance);
+            childDistance.setText("Distance: " + room.getDistance()+" meters");
+
+        }
         return convertView;
     }
 
@@ -155,6 +161,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     public void updateRooms(List<Room> newlist, int group) {
         listDataChild.get(listDataHeader.get(group)).clear();
         listDataChild.get(listDataHeader.get(group)).addAll(newlist);
+        calculateDistance();
         this.notifyDataSetChanged();
     }
 
