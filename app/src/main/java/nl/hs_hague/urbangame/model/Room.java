@@ -16,6 +16,7 @@ public class Room implements Serializable {
     private List<User> members;
     private Date startDate;
     private Date endDate;
+    private int distance;
     private List<Checkpoint> checkpoints;
 
     public Room(){
@@ -52,6 +53,10 @@ public class Room implements Serializable {
         return ownerId;
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
@@ -75,6 +80,8 @@ public class Room implements Serializable {
     public Date getEndDate() {
         return endDate;
     }
+
+    public void setDistance(int distance){this.distance = distance;}
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
