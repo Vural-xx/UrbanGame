@@ -2,6 +2,7 @@ package nl.hs_hague.urbangame.adapter;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import nl.hs_hague.urbangame.R;
+import nl.hs_hague.urbangame.RoomListActivity;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 
@@ -68,8 +70,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
             CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
             Location locaux = objCurrentLocationAdapter.getCurrentLocation();
             System.out.println("Location adapter: "+locaux);
-            if((!room.getCheckpoints().isEmpty()) && (groupPosition == 1))
-            {
+            if((!room.getCheckpoints().isEmpty()) && (groupPosition == 1)) {
                     listCheck = room.getCheckpoints();
                        locaux.distanceBetween(listCheck.get(0).getLatitude(),listCheck.get(0).getLongitude(),locaux.getLatitude(),locaux.getLongitude(),res);
 
@@ -83,9 +84,14 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         }
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
-
-
-        txtListChild.setText(childText);
+        if(groupPosition == 0){
+            txtListChild.setText(childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size()) ;
+            if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+                txtListChild.setTextColor(Color.GREEN);
+            }
+        }else{
+            txtListChild.setText(childText);
+        }
         return convertView;
     }
 
