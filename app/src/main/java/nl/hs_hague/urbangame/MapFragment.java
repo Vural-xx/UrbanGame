@@ -68,8 +68,8 @@ public class MapFragment extends Fragment {
 
                 hague = new LatLng(locaux.getLatitude(),locaux.getLongitude());
                 // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(hague).zoom(16).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(hague)); //Moving the camera to our current location
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(14)); //Having a better view of our location
             }
         });
 
