@@ -46,7 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap; //The map that we will show
     private GoogleApiClient mGoogleApiClient; //The client object needed to get access to the location of the device
     private Location mLastLocation;
-    public LatLng sydney, cLocation;
+    public LatLng cLocation;
     public List<Address> resAddress; // Arraylist where is saved the current location
     public List<Address> markersAddress; //Arraylist where are saved the addresses of the result from the search, in this demo it is searching for Jumbo stores
     private List<LatLng> markers; //Arraylist where are save the latitude and the longitude of the elements of the markersAddress array
@@ -135,8 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
-
-        System.out.println("Im in onMapReady");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             getPermission();
             return;
@@ -162,7 +160,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onMapLongClick(LatLng latLng) {
-                System.out.println("I added the click listener");
                 mapLongListener(latLng);
             }
         });
@@ -250,7 +247,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             idMarkers.get(i).setTitle(mess);
                          modified = 't';
                         mess = "";
-                        System.out.println("Id marker clicked two:"+ arg0.getId()+ " "+ idMarkers.get(i).getId());
                         break;
                     }
 
@@ -258,7 +254,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } while (i < idMarkers.size() );
                 if (modified == 'f') {
                     idMarkers.add(arg0);
-                    System.out.println("Agregue otro: " + i + modified);
                     if (!mess.equals(""))
                         idMarkers.get(i).setTitle(mess);
                     mess = "";
@@ -287,14 +282,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             try {
                 resAddress = geo.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 5);
                 mess = "Your address is:";
-                Toast.makeText(this, mess + resAddress.get(0).getAddressLine(0) + " " + resAddress.get(0).getPostalCode(),
-                        Toast.LENGTH_LONG).show();
-
                 mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
                     @Override
                     public void onMapLongClick(LatLng latLng) {
-                        System.out.println("I added the click listener");
                         mapLongListener(latLng);
                     }
                 });
@@ -321,7 +312,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String name, String hint, String id) {
         mess = name;
-        System.out.println("You clicked on: "+id);
         String getId[] = id.split("m");
         int idReceived = Integer.parseInt(getId[1]);
         if((names.isEmpty() == true) || (names.size() == idReceived)){
@@ -329,7 +319,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             hints.add(hint);
         }
         else if(names.size() > idReceived){
-            System.out.println("I entered to the else part"+ name+hint);
             names.set(idReceived,name);
             hints.set(idReceived,hint);
         }
@@ -420,16 +409,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public int getCounterMarkers(){
         return counterMarkers;
     }
-    public GoogleMap getmMap(){
-        return mMap;
-    }
     public GoogleApiClient getmGoogleApiClient(){
         return mGoogleApiClient;
     }
     public String getMess(){
         return mess;
     }
-    public Button getDoneButton(){return doneButton;}
     public int getCheckCounter(){
         return checkCounter;
     }
