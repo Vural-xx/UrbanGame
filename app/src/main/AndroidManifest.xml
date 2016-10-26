@@ -116,10 +116,6 @@
 
         <activity android:name=".Login" />
         <activity android:name=".UserSettingsActivity"></activity>
-        <service
-            android:name=".util.GeofenceTransitionsIntentService"
-            android:exported="true">
-        </service>
 
         <receiver android:name=".util.YourReceiver"
             android:exported="true">
