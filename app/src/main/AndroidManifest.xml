@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.hs_hague.urbangame">
 
+    <permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:protectionLevel="signature" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,9 +24,6 @@
         android:name="nl.hs_hague.pushnotifications.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:protectionLevel="signature" />
 
     <uses-permission android:name="nl.hs_hague.pushnotifications.permission.C2D_MESSAGE" />
 
