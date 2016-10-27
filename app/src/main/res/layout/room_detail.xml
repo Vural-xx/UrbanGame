@@ -80,8 +80,8 @@
                                 android:layout_gravity="fill"
                                 android:text="Hallo hier kommt die Beschreibung"
                                 style="?android:attr/textAppearanceLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
                         </TableRow>
 
