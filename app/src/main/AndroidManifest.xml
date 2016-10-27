@@ -116,7 +116,7 @@
         <activity android:name=".Login" />
         <activity android:name=".UserSettingsActivity"></activity>
 
-        <receiver android:name=".util.YourReceiver"
+        <receiver android:name=".util.CheckpointReceiver"
             android:exported="true">
             <intent-filter >
                 <action android:name="ACTION_PROXIMITY_ALERT" />

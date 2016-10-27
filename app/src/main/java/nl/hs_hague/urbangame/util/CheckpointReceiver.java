@@ -24,7 +24,7 @@ import static nl.hs_hague.urbangame.RoomListActivity.firebaseAuth;
  * Created by vural on 26.10.16.
  */
 
-public class YourReceiver extends BroadcastReceiver {
+public class CheckpointReceiver extends BroadcastReceiver {
     private Context context;
     @Override
     public void onReceive(Context context, Intent intent) {
