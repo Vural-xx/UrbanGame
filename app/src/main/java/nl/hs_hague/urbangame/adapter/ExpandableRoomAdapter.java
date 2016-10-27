@@ -2,6 +2,7 @@ package nl.hs_hague.urbangame.adapter;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import java.util.List;
 import nl.hs_hague.urbangame.R;
 import nl.hs_hague.urbangame.RoomListActivity;
 import nl.hs_hague.urbangame.comparator.RoomComparator;
-import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 
 /**
@@ -85,6 +85,12 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
+        if(groupPosition == 0){
+            childText = childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size();
+            if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+                txtListChild.setTextColor(Color.GREEN);
+            }
+        }
         txtListChild.setText(childText);
         if(groupPosition == 1) {
             TextView childDistance = (TextView) convertView

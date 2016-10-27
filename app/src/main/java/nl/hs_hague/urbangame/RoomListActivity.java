@@ -65,9 +65,8 @@ public class RoomListActivity extends AppCompatActivity{
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
-    public static Long t;
-    private  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
-    private LocationManager locationManager;
+    public  static  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
+    public static LocationManager locationManager;
 
 
     @Override
@@ -154,7 +153,6 @@ public class RoomListActivity extends AppCompatActivity{
                 return false;
             }
         });
-
     }
 
     private void goLogin() {
@@ -346,19 +344,25 @@ public class RoomListActivity extends AppCompatActivity{
     public void setCheckpointAlerts(){
         List<Room> publicRooms = rooms.get(HEADER_STARTED_ROOMS);
         for(Room r: publicRooms){
-            for(Checkpoint c: r.foundCheckPoints(firebaseAuth.getCurrentUser().getUid())){
-                if(!alertedCheckpoints.contains(c)){
+            for(Checkpoint c: r.getCheckpointsForUser(firebaseAuth.getCurrentUser().getUid())){
+                if(!alertedCheckpointCreated(c)){
                     addCheckpointAlert(c);
                 }
             }
         }
     }
 
-    public void addCheckpointAlert(Checkpoint checkpoint){
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            getPermission();
-            return;
+    public boolean alertedCheckpointCreated(Checkpoint checkpoint){
+        for (int i =0 ; i < alertedCheckpoints.size(); i++){
+            if(alertedCheckpoints.get(i).getName().equals(checkpoint.getName())){
+                return true;
+            }
         }
+        return false;
+    }
+
+    public void addCheckpointAlert(Checkpoint checkpoint){
+
         // 100 meter radius
         float radius = 100f;
         // Expiration is 10 Minutes
@@ -368,6 +372,10 @@ public class RoomListActivity extends AppCompatActivity{
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_ONE_SHOT);
         locationManager.addProximityAlert(checkpoint.getLatitude(), checkpoint.getLongitude(), radius, expiration, pendingIntent);
         alertedCheckpoints.add(checkpoint);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            getPermission();
+            return;
+        }
 
     }
 }

@@ -34,7 +34,6 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <!-- <service android:name=".util.GeofenceTrasitionService" android:exported="true" android:enabled="true"/> -->
         <activity
             android:name=".Welcome_Screen"
             android:label="@string/app_name">
@@ -117,7 +116,7 @@
         <activity android:name=".Login" />
         <activity android:name=".UserSettingsActivity"></activity>
 
-        <receiver android:name=".util.YourReceiver"
+        <receiver android:name=".util.CheckpointReceiver"
             android:exported="true">
             <intent-filter >
                 <action android:name="ACTION_PROXIMITY_ALERT" />

@@ -33,6 +33,7 @@ import nl.hs_hague.urbangame.adapter.CheckpointAdapter;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CheckpointHolder;
 import nl.hs_hague.urbangame.model.Room;
+import nl.hs_hague.urbangame.util.UIUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -58,6 +59,8 @@ public class RoomCreateFragment extends DialogFragment {
     public static final int GET_MARKERS_REQUEST = 1;  // The request code
     public static final String MARKER = "marker";
     private List<Checkpoint> checkpoints;
+    public final String checkpointholderKey = "checkpointHolder";
+    private CheckpointHolder checkpointHolder;
 
     @NonNull
     @Override
@@ -125,21 +128,26 @@ public class RoomCreateFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View view) {
-                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null && etDescription != null){
+                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null && etDescription != null && checkpoints != null && checkpoints.size() != 0){
                             Room room = new Room(etName.getText().toString(), startDate, endDate);
                             room.setCheckpoints(checkpoints);
                             room.setDescription(etDescription.getText().toString());
                             room.setOwnerId(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
                             RoomListActivity.databaseHandler.createRoom(room);
-                            d.dismiss();
                             Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
+                            d.dismiss();
                         }else{
-                            Toast.makeText(getContext(),"Please fill out the form", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),"Please fill out the form and set at least one checkpoint", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
             }
         });
+        if (savedInstanceState != null) {
+            checkpointHolder = (CheckpointHolder) savedInstanceState.get(checkpointholderKey);
+            createMarkersList();
+
+        }
         return  d;
 
     }
@@ -184,17 +192,32 @@ public class RoomCreateFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GET_MARKERS_REQUEST) {
             if (resultCode == RESULT_OK) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                ViewGroup header = (ViewGroup)inflater.inflate(R.layout.marker_list_header, lvMarkers, false);
-                lvMarkers.addHeaderView(header, null, false);
-                CheckpointHolder checkpointHolder = (CheckpointHolder) data.getSerializableExtra(MARKER);
-                checkpointAdapter.clear();
-                checkpointAdapter.addAll(checkpointHolder.getCheckpoints());
-                checkpointAdapter.notifyDataSetChanged();
-                checkpoints = checkpointHolder.getCheckpoints();
+                checkpointHolder = (CheckpointHolder) data.getSerializableExtra(MARKER);
+                createMarkersList();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void createMarkersList(){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.marker_list_header, lvMarkers, false);
+        lvMarkers.addHeaderView(header, null, false);
+        checkpointAdapter.clear();
+        checkpointAdapter.addAll(checkpointHolder.getCheckpoints());
+        checkpointAdapter.notifyDataSetChanged();
+        UIUtils.setListViewHeightBasedOnItems(lvMarkers);
+        checkpoints = checkpointHolder.getCheckpoints();
+        btnSetCheckpoints.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        if(checkpointHolder != null){
+            // Save the user's current game state
+            savedInstanceState.putSerializable(checkpointholderKey, checkpointHolder);
+        }
     }
 
 }

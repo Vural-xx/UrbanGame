@@ -32,8 +32,6 @@ public class DatabaseHandler {
         root.child("users").updateChildren(map);
     }
 
-
-
     public DatabaseReference getRoot(){
         return root;
     }
