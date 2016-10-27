@@ -148,10 +148,10 @@ public class RoomDetailFragment extends Fragment {
                 timeLeft = timeLeft + customTimer.getDaysLeft() +" Days ";
             }
             if(customTimer.getHoursLeft() > 0){
-                timeLeft = timeLeft + customTimer.getHoursLeft() +" Hours ";
+                timeLeft = timeLeft + customTimer.getMinutesLeft()/60 +" Hours ";
             }
             if(customTimer.getMinutesLeft() > 0){
-                timeLeft = timeLeft + customTimer.getMinutesLeft() +" Minutes ";
+                timeLeft = timeLeft + customTimer.getMinutesLeft()/60 +" Minutes ";
             }
 
             txtleftTime.setText(timeLeft);
