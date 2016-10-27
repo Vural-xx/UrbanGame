@@ -1,15 +1,19 @@
 package nl.hs_hague.urbangame;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,21 +29,25 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-public class UserSettingsActivity extends AppCompatActivity {
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static nl.hs_hague.urbangame.R.string.profile;
 
-    FirebaseAuth mAuthListener;
+public class UserSettingsActivity extends AppCompatActivity implements ReauthDialog.ReauthDialogListener {
+
     FirebaseUser fbUser;
     Button confirmButton;
-    Button uImgButton;
+    ImageView Profile_Picture;
     StorageReference mStorageReference;
+    ReauthDialog newFragment;
     private static final int GALLERY_INTENT = 2;
+    private static  String Password="";
+    private boolean reauth_done=false;
+    private boolean fill_pass=true;
 
-
-
-
-    EditText etUsername, etEmail, etPass, etPass2;
-
+    EditText Username, Email, Pass, Pass2;
+    TextView pass,pass2,reauth;
     String newUsername, newEmail, newPass, newPass2;
+    Uri newImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +56,42 @@ public class UserSettingsActivity extends AppCompatActivity {
 
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         confirmButton = (Button)findViewById(R.id.btnConfirm);
-        uImgButton = (Button) findViewById(R.id.btnUploadImage);
+        Profile_Picture = (ImageView) findViewById(R.id.profileImage);
         mStorageReference = FirebaseStorage.getInstance().getReference();
 
+        Username = (EditText) findViewById(R.id.etUsername);
+        Email = (EditText) findViewById(R.id.etEmail);
+        Pass = (EditText) findViewById(R.id.etPass);
+        Pass2 = (EditText) findViewById(R.id.etPass2);
+        pass = (TextView) findViewById(R.id.textView5);
+        pass2 = (TextView) findViewById(R.id.textView6);
+        reauth= (TextView) findViewById(R.id.reauth);
+
+                                                    //if face load facebook data and unable views
+        if(fbUser!=null){
+                if(fbUser.getDisplayName()==null)
+                    Username.setText(fbUser.getEmail());
+                else
+                    Username.setText(fbUser.getDisplayName());
+
+               // Profile_Picture.setImageURI(fbUser.getPhotoUrl());
+
+               Email.setText(fbUser.getEmail());
+               Email.setEnabled(false);
+               Pass.setVisibility(View.INVISIBLE);
+               Pass2.setVisibility(View.INVISIBLE);
+               pass.setVisibility(View.INVISIBLE);
+               pass2.setVisibility(View.INVISIBLE);
+        }
+        else {finish();}
+
+
+        reauth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNoticeDialog();
+            }
+        });
 
 
         confirmButton.setOnClickListener(
@@ -58,74 +99,73 @@ public class UserSettingsActivity extends AppCompatActivity {
                 {
                     public void onClick(View view)
                     {
-                        if (fbUser != null) {
+                        if (fbUser!=null) {
 
-
-
-                            etUsername = (EditText) findViewById(R.id.etUsername);
-                            etEmail = (EditText) findViewById(R.id.etEmail);
-                            etPass = (EditText) findViewById(R.id.etPass);
-                            etPass2 = (EditText) findViewById(R.id.etPass2);
-
-                            newUsername = etUsername.getText().toString();
-                            newEmail = etEmail.getText().toString();
-                            newPass = etPass.getText().toString();
-                            newPass2 = etPass2.getText().toString();
-
-
+                           // newImage=Profile_Picture.get
+                            newUsername = Username.getText().toString();
+                            newEmail = Email.getText().toString();
+                            newPass = Pass.getText().toString();
+                            newPass2 = Pass2.getText().toString();
 
                             if(!newUsername.isEmpty()){
-
-                                UserProfileChangeRequest fbUpdates = new UserProfileChangeRequest.Builder()
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(newUsername)
                                         .build();
 
-                                fbUser.updateProfile(fbUpdates)
+                                fbUser.updateProfile(profileUpdates)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    Log.d(fbUser.getDisplayName(), "User profile updated.");
-                                                    //Toast.makeText(getApplicationContext(), fbUser.getDisplayName(), Toast.LENGTH_SHORT).show();
-
+                                                    Toast.makeText(UserSettingsActivity.this, "Username updated", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
-                                
-
                             }
 
-                            if(!newEmail.isEmpty() && newEmail.contains("@")){
-
-
-
-                                fbUser.updateEmail(newEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(fbUser.getEmail(), "User email address updated.");
+                            if(reauth_done && !newEmail.isEmpty() && newEmail.contains("@"))  //need reauthentication
+                            {
+                                AuthCredential credential = EmailAuthProvider
+                                        .getCredential(fbUser.getEmail(), Password);
+                                fbUser.reauthenticate(credential);
+                                fbUser.updateEmail(newEmail)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(UserSettingsActivity.this, "Email updated", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    }
-                                });
-                            }
+                                    });}
 
-                            if(!newPass.equals("") && newPass.equals(newPass2)){
-                                fbUser.updatePassword(newPass);
+                            if(!newPass.isEmpty()) { //need reauthentication
+                                if (newPass.equals(newPass2) && newPass.length()>5) {
+                                       AuthCredential credential = EmailAuthProvider
+                                              .getCredential(fbUser.getEmail(), Password);
+                                    fbUser.reauthenticate(credential);
+                                    fbUser.updatePassword(newPass)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(UserSettingsActivity.this, "Password updated", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                    fill_pass=true;
+                                } else
+                                {Toast.makeText(UserSettingsActivity.this, "Error verify password", Toast.LENGTH_SHORT).show();
+                                  fill_pass=false; }
 
-                            }
-                            Toast.makeText(getApplicationContext(), R.string.profile_updated, Toast.LENGTH_SHORT).show();
+                            } else fill_pass=true;
 
-
-
-                            // User is signed in
-                        } else {
-                            // No user is signed in
-                        }
-
+                        }//user null
+                        if(fill_pass)
+                           finish();
                     }
                 });
 
-        uImgButton.setOnClickListener(
+        Profile_Picture.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
@@ -137,6 +177,37 @@ public class UserSettingsActivity extends AppCompatActivity {
     }
 
 
+    public void showNoticeDialog ()
+    {
+        newFragment = new ReauthDialog();
+        newFragment.show(getSupportFragmentManager(), "dialog_reauth");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, final String password) {
+            AuthCredential credential = EmailAuthProvider
+                    .getCredential(fbUser.getEmail(), password);
+
+            fbUser.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful())
+                            {
+                                reauth.setVisibility(View.INVISIBLE);
+                                Pass.setVisibility(View.VISIBLE);
+                                Pass2.setVisibility(View.VISIBLE);
+                                pass.setVisibility(View.VISIBLE);
+                                pass2.setVisibility(View.VISIBLE);
+                                Email.setEnabled(true);
+                                Password = password;
+                                reauth_done=true;
+                            }else
+                                Toast.makeText(getApplicationContext(), "No reauthentication, wrong password", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent){
         super.onActivityResult(requestCode, resultCode, intent);
@@ -146,36 +217,15 @@ public class UserSettingsActivity extends AppCompatActivity {
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getApplicationContext(), R.string.user_photo_uploaded, Toast.LENGTH_SHORT).show();
-
-                    UserProfileChangeRequest fbUpdates = new UserProfileChangeRequest.Builder()
-                            .setPhotoUri(uri)
-                            .build();
-
-                    fbUser.updateProfile(fbUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(fbUser.getPhotoUrl().toString(), "photo updated.");
-                            }
-                        }
-                    });
-
-
+                Profile_Picture.setImageURI(uri);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(getApplicationContext(), R.string.user_photo_upload_fail, Toast.LENGTH_SHORT).show();
-
                 }
             });
 
         }
-    }
-
-    public void UpdateEmail(String _email){
-        fbUser.updateEmail(_email);
-
     }
 }

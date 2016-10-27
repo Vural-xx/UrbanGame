@@ -64,7 +64,6 @@ public class RegisterDialog extends DialogFragment {
                                             public void onComplete(@NonNull Task<AuthResult> task) {
                                                 Log.d(TAG, "IT WORKS");
                                                 didRegisterWork = true;
-                                                //Toast.makeText(getActivity().getApplicationContext(), R.string.registration_successful, Toast.LENGTH_LONG).show();
 
                                                 if (!task.isSuccessful()) {
                                                     didRegisterWork = false;
