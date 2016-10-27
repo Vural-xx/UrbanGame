@@ -1,97 +1,104 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="18dp"
-    android:orientation="vertical"
-    tools:context="nl.hs_hague.urbangame.RoomCreateFragment">
-
-    <TableLayout
-        android:id="@+id/roomDetailTable"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dip"
-        android:layout_marginRight="2dip"
-        android:paddingLeft="3dip"
-        android:paddingRight="3dip"
-        android:shrinkColumns="1"
-        android:stretchColumns="*">
-
-        <TableRow>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/name" />
-            <EditText
-                android:id="@+id/create_room_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/description_label" />
-            <EditText
-                android:id="@+id/create_room_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-
-        <TableRow>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start" />
-            <EditText
-                android:id="@+id/create_room_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:editable="false"/>
-            <ImageView
-                android:id="@+id/btn_room_start_cal"
-                android:src="@drawable/ic_action_calendar"/>
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/end" />
-            <EditText
-                android:id="@+id/create_room_end"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:editable="false"/>
-            <ImageView
-                android:id="@+id/btn_room_end_cal"
-                android:src="@drawable/ic_action_calendar"/>
-        </TableRow>
-
-    </TableLayout>
-
-
-    <ListView
-        android:id="@+id/lvCreatedMarkers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:descendantFocusability="beforeDescendants"></ListView>
-
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/btnSetCheckpoints"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="18dp"
+        android:orientation="vertical"
+        tools:context="nl.hs_hague.urbangame.RoomCreateFragment">
+
+        <TableLayout
+            android:id="@+id/roomDetailTable"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/set_checkpoints" />
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:paddingLeft="3dip"
+            android:paddingRight="3dip"
+            android:shrinkColumns="1"
+            android:stretchColumns="*">
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/name" />
+                <EditText
+                    android:id="@+id/create_room_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_label" />
+                <EditText
+                    android:id="@+id/create_room_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start" />
+                <EditText
+                    android:id="@+id/create_room_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"/>
+                <ImageView
+                    android:id="@+id/btn_room_start_cal"
+                    android:src="@drawable/ic_action_calendar"/>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end" />
+                <EditText
+                    android:id="@+id/create_room_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"/>
+                <ImageView
+                    android:id="@+id/btn_room_end_cal"
+                    android:src="@drawable/ic_action_calendar"/>
+            </TableRow>
+
+        </TableLayout>
+
+
+        <ListView
+            android:id="@+id/lvCreatedMarkers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"></ListView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnSetCheckpoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/set_checkpoints" />
+        </LinearLayout>
+
+
+
     </LinearLayout>
 
 
 
-</LinearLayout>
+</ScrollView>

@@ -86,7 +86,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
         if(groupPosition == 0){
-            txtListChild.setText(childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size()) ;
+            childText = childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size();
             if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
                 txtListChild.setTextColor(Color.GREEN);
             }
