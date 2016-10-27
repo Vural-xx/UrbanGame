@@ -33,6 +33,7 @@ import nl.hs_hague.urbangame.adapter.CheckpointAdapter;
 import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CheckpointHolder;
 import nl.hs_hague.urbangame.model.Room;
+import nl.hs_hague.urbangame.util.UIUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -191,7 +192,9 @@ public class RoomCreateFragment extends DialogFragment {
                 checkpointAdapter.clear();
                 checkpointAdapter.addAll(checkpointHolder.getCheckpoints());
                 checkpointAdapter.notifyDataSetChanged();
+                UIUtils.setListViewHeightBasedOnItems(lvMarkers);
                 checkpoints = checkpointHolder.getCheckpoints();
+                btnSetCheckpoints.setVisibility(View.INVISIBLE);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
