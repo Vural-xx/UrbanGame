@@ -128,16 +128,16 @@ public class RoomCreateFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View view) {
-                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null && etDescription != null){
+                        if(!etName.getText().toString().equals("") && startDate != null && endDate != null && etDescription != null && checkpoints != null && checkpoints.size() != 0){
                             Room room = new Room(etName.getText().toString(), startDate, endDate);
                             room.setCheckpoints(checkpoints);
                             room.setDescription(etDescription.getText().toString());
                             room.setOwnerId(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
                             RoomListActivity.databaseHandler.createRoom(room);
-                            d.dismiss();
                             Toast.makeText(getContext(),"Succesfully created new Room", Toast.LENGTH_SHORT).show();
+                            d.dismiss();
                         }else{
-                            Toast.makeText(getContext(),"Please fill out the form", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),"Please fill out the form and set at least one checkpoint", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
