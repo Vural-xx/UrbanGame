@@ -47,7 +47,7 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
     EditText Username, Email, Pass, Pass2;
     TextView pass,pass2,reauth;
     String newUsername, newEmail, newPass, newPass2;
-    Uri newImage;
+    Uri myuri=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,12 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
                 else
                     Username.setText(fbUser.getDisplayName());
 
-               // Profile_Picture.setImageURI(fbUser.getPhotoUrl());
+               if (fbUser.getPhotoUrl()!=null) //cuando no tenga imagen
+               {Profile_Picture.setImageURI(fbUser.getPhotoUrl());
+                   System.out.println(fbUser.getPhotoUrl().toString());
+               }
+               else//pone la de default
+                   Profile_Picture.setImageResource(R.drawable.com_facebook_profile_picture_blank_square);
 
                Email.setText(fbUser.getEmail());
                Email.setEnabled(false);
@@ -101,11 +106,25 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
                     {
                         if (fbUser!=null) {
 
-                           // newImage=Profile_Picture.get
                             newUsername = Username.getText().toString();
                             newEmail = Email.getText().toString();
                             newPass = Pass.getText().toString();
                             newPass2 = Pass2.getText().toString();
+
+                            if(myuri!=null)
+                            {
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        .setPhotoUri(myuri)
+                                        .build();
+                                fbUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(UserSettingsActivity.this, "Image updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            } //else no hubo cambio de foto
 
                             if(!newUsername.isEmpty()){
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -212,12 +231,13 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
     protected void onActivityResult(int requestCode, int resultCode, Intent intent){
         super.onActivityResult(requestCode, resultCode, intent);
         if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK){
-            final Uri uri = intent.getData();
-            StorageReference filepath = mStorageReference.child("UserPhotos").child(uri.getLastPathSegment());
-            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+             myuri = intent.getData();
+            StorageReference filepath = mStorageReference.child("UserPhotos").child(myuri.getLastPathSegment());
+            filepath.putFile(myuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Profile_Picture.setImageURI(uri);
+                Profile_Picture.setImageURI(myuri);
+                    System.out.println(myuri.toString());
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
