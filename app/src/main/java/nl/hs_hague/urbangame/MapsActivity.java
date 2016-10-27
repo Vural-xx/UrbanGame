@@ -208,8 +208,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if (cLocality.equals(mLocality)) {
                     if (counterMarkers < maxMarkers) {
-                        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
+                       Marker mark =  mMap.addMarker(new MarkerOptions().position(latLng).title("Marker " + index));
                         counterMarkers++;
+                        markerClick(mark);
                         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override
                             public boolean onMarkerClick(Marker arg0) {
@@ -368,17 +369,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = this.getIntent();
         CheckpointHolder checkpointHolder = new CheckpointHolder();
         checkpointHolder.setCheckpoints(new ArrayList<Checkpoint>());
-        for (int i = 0; i < idMarkers.size(); i++){
+        try {
+            for (int i = 0; i < idMarkers.size(); i++) {
 
-            idMarkers.get(i).setTitle(names.get(i));
+                idMarkers.get(i).setTitle(names.get(i));
 
-            Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
-            checkpoint.setHint(hints.get(i));
-            checkpointHolder.getCheckpoints().add(checkpoint);
-        };
-        intent.putExtra(RoomCreateFragment.MARKER, checkpointHolder);
-        this.setResult(RESULT_OK, intent);
-        finish();
+                Checkpoint checkpoint = new Checkpoint(idMarkers.get(i).getTitle(), idMarkers.get(i).getPosition().latitude, idMarkers.get(i).getPosition().longitude);
+                checkpoint.setHint(hints.get(i));
+                checkpointHolder.getCheckpoints().add(checkpoint);
+            }
+            ;
+            intent.putExtra(RoomCreateFragment.MARKER, checkpointHolder);
+            this.setResult(RESULT_OK, intent);
+            finish();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(context,"All of the markers need a name and a hint", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

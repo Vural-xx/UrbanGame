@@ -61,6 +61,7 @@ public class Login extends AppCompatActivity {
         final EditText passwordBox = (EditText) findViewById(R.id.editPass) ;
         mAuth = FirebaseAuth.getInstance();
 
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onLogin(emailBox.getText().toString(),passwordBox.getText().toString());

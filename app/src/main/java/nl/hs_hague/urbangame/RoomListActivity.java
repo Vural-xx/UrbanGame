@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,9 +30,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,6 +65,7 @@ public class RoomListActivity extends AppCompatActivity{
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
+    public static Long t;
     private  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
     private LocationManager locationManager;
 
@@ -252,6 +256,7 @@ public class RoomListActivity extends AppCompatActivity{
         roomsHeader.add(HEADER_PUBLIC_ROOMS);
         roomsHeader.add(HEADER_OWN_ROOMS);
 
+
         databaseHandler = new DatabaseHandler();
 
         searchQuery = "";
@@ -310,6 +315,8 @@ public class RoomListActivity extends AppCompatActivity{
 
             }
         });
+
+
     }
 
     private void getPermission() {

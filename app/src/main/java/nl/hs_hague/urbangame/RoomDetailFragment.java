@@ -2,6 +2,7 @@ package nl.hs_hague.urbangame;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,9 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 import nl.hs_hague.urbangame.adapter.FoundCheckpointAdapter;
 import nl.hs_hague.urbangame.adapter.UserAdapter;
@@ -33,7 +40,6 @@ public class RoomDetailFragment extends Fragment {
     private UserAdapter userAdapter;
     private ListView lvCheckpoints;
     private FoundCheckpointAdapter checkpointAdapter;
-
     public RoomDetailFragment() {
     }
 
@@ -49,9 +55,6 @@ public class RoomDetailFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(currentRoom.getName());
             }
-
-
-
         }
     }
 
@@ -79,42 +82,44 @@ public class RoomDetailFragment extends Fragment {
         tabHost.addTab(spec3);
 
         if (currentRoom != null) {
-            final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
-            ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
-            ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
-            bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
-            view = (View) rootView.findViewById(R.id.map_fragment);
 
-            if(currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)){
-                bntJoinRoom.setVisibility(View.INVISIBLE);
-                ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
-                ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
-                ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
-            }else{
-                view.setVisibility(View.INVISIBLE);//hide map
-                bntJoinRoom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(currentRoom.getMembers() == null){
-                            List<User> userList = new ArrayList<User>();
-                            currentRoom.setMembers(userList);
+
+                final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
+                ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
+                ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
+                bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
+                view = (View) rootView.findViewById(R.id.map_fragment);
+
+                if (currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)) {
+                    bntJoinRoom.setVisibility(View.INVISIBLE);
+                    ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
+                    ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
+                    ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
+                } else {
+                    view.setVisibility(View.INVISIBLE);//hide map
+                    bntJoinRoom.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (currentRoom.getMembers() == null) {
+                                List<User> userList = new ArrayList<User>();
+                                currentRoom.setMembers(userList);
+                            }
+                            currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+                            RoomListActivity.databaseHandler.createRoom(currentRoom);
+                            roomDetail.setVisibility(View.INVISIBLE);
+
                         }
-                        currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
-                        RoomListActivity.databaseHandler.createRoom(currentRoom);
-                        roomDetail.setVisibility(View.INVISIBLE);
+                    });
+                }
+                // get the listview
+                lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
+                userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, getMembersWithoutCurrentUser());
+                lvMembers.setAdapter(userAdapter);
 
-                    }
-                });
+                lvCheckpoints = (ListView) rootView.findViewById(R.id.lvFoundCheckpoints);
+                checkpointAdapter = new FoundCheckpointAdapter(getContext(), R.layout.room_checkpoint_list_content, currentRoom.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+                lvCheckpoints.setAdapter(checkpointAdapter);
             }
-            // get the listview
-            lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
-            userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, getMembersWithoutCurrentUser());
-            lvMembers.setAdapter(userAdapter);
-
-            lvCheckpoints = (ListView) rootView.findViewById(R.id.lvFoundCheckpoints);
-            checkpointAdapter = new FoundCheckpointAdapter(getContext(), R.layout.room_checkpoint_list_content, currentRoom.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
-            lvCheckpoints.setAdapter(checkpointAdapter);
-        }
 
         return rootView;
     }
