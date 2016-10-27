@@ -1,5 +1,10 @@
 package nl.hs_hague.urbangame.model;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -161,5 +166,16 @@ public class Room implements Serializable {
 
     public boolean roomCompleted(String uuid){
         return foundCheckPoints(uuid).size() == checkpoints.size();
+    }
+
+
+    public CustomTimer getLeftTime(Date currentTime){
+        DateTime currentDateTime = new DateTime(currentTime.getTime());
+        DateTime endDateTime = new DateTime(endDate.getTime());
+        return new CustomTimer(Days.daysBetween(currentDateTime,endDateTime).getDays(), Hours.hoursBetween(currentDateTime,endDateTime).getHours(), Minutes.minutesBetween(currentDateTime,endDateTime).getMinutes());
+    }
+
+    public boolean timeLeft(Date currentTime){
+        return (endDate.getTime() - currentTime.getTime()) > 0;
     }
 }

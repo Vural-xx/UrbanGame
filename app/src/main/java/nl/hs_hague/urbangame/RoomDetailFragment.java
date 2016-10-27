@@ -1,12 +1,12 @@
 package nl.hs_hague.urbangame;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 
 import nl.hs_hague.urbangame.adapter.FoundCheckpointAdapter;
 import nl.hs_hague.urbangame.adapter.UserAdapter;
+import nl.hs_hague.urbangame.model.CustomTimer;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 
@@ -40,6 +36,7 @@ public class RoomDetailFragment extends Fragment {
     private UserAdapter userAdapter;
     private ListView lvCheckpoints;
     private FoundCheckpointAdapter checkpointAdapter;
+    private TextView txtleftTime;
     public RoomDetailFragment() {
     }
 
@@ -89,7 +86,8 @@ public class RoomDetailFragment extends Fragment {
                 ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
                 bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
                 view = (View) rootView.findViewById(R.id.map_fragment);
-
+                ((TextView) rootView.findViewById(R.id.time_label)).setText("Left Time:");
+                txtleftTime = (TextView) rootView.findViewById(R.id.time_text);
                 if (currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)) {
                     bntJoinRoom.setVisibility(View.INVISIBLE);
                     ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
@@ -111,6 +109,7 @@ public class RoomDetailFragment extends Fragment {
                         }
                     });
                 }
+                displayLeftTime();
                 // get the listview
                 lvMembers = (ListView) rootView.findViewById(R.id.lvMembers);
                 userAdapter = new UserAdapter(getContext(), R.layout.room_member_list_content, getMembersWithoutCurrentUser());
@@ -136,4 +135,32 @@ public class RoomDetailFragment extends Fragment {
 
         return users;
     }
+
+    public void displayLeftTime(){
+            if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            }
+            Date currentTime = new Date(RoomListActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime());
+        if(currentRoom.timeLeft(currentTime)){
+            CustomTimer customTimer =  currentRoom.getLeftTime(currentTime);
+            String timeLeft ="";
+            if(customTimer.getDaysLeft() > 0){
+                timeLeft = timeLeft + customTimer.getDaysLeft() +" Days ";
+            }
+            if(customTimer.getHoursLeft() > 0){
+                timeLeft = timeLeft + customTimer.getHoursLeft() +" Hours ";
+            }
+            if(customTimer.getMinutesLeft() > 0){
+                timeLeft = timeLeft + customTimer.getMinutesLeft() +" Minutes ";
+            }
+
+            txtleftTime.setText(timeLeft);
+        }else {
+            txtleftTime.setText("Game is over");
+        }
+
+    }
+
+
+
 }

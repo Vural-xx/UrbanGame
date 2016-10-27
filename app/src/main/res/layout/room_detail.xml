@@ -84,6 +84,22 @@
                                 android:layout_height="wrap_content"
                                 tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
                         </TableRow>
+                        <TableRow>
+
+                            <TextView
+                                android:id="@+id/time_label"
+                                android:layout_gravity="fill"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:id="@+id/time_text"
+                                android:layout_gravity="fill"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:context="nl.hs_hague.urbangame.RoomDetailFragment" />
+                        </TableRow>
 
 
                         <TableRow>
