@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,9 @@ import nl.hs_hague.urbangame.model.Room;
 public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
+    public static Location locaux;
     private List<String> listDataHeader; // header titles
+    private List<Address> markersAddress;
     // child data in format of header title, child title
     private HashMap<String, List<Room>> listDataChild;
     private float[] res;
@@ -38,6 +42,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         this.listDataHeader = listDataHeader;
         res = new float[20];
         listDataChild = new HashMap<String, List<Room>>();
+        markersAddress = new ArrayList<Address>();
         for(int i = 0; i < listDataHeader.size(); i++){
             listDataChild.put(listDataHeader.get(i), new ArrayList<Room>());
         }
@@ -48,14 +53,33 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     public void calculateDistance(){
         List<Room> publicRooms = listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS);
         CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
-        Location locaux = objCurrentLocationAdapter.getCurrentLocation();
-        for(int i=0; i<publicRooms.size(); i++) {
-            if (!publicRooms.get(i).getCheckpoints().isEmpty()) {
-                locaux.distanceBetween(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), locaux.getLatitude(), locaux.getLongitude(), res);
-                publicRooms.get(i).setDistance((int) res[0]);
+        locaux = objCurrentLocationAdapter.getCurrentLocation();
+        Geocoder geo = new Geocoder(_context);
+        try {
+            markersAddress = geo.getFromLocation(locaux.getLatitude(), locaux.getLongitude(), 2);
+            String currentCity = markersAddress.get(0).getLocality();
+            String roomCity="";
+            for (int i = 0; i < publicRooms.size(); i++) {
+
+                if (!publicRooms.get(i).getCheckpoints().isEmpty()) {
+                    markersAddress = geo.getFromLocation(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), 2);
+                    roomCity = markersAddress.get(0).getLocality();
+                    if (roomCity.equals(currentCity)) {
+                        locaux.distanceBetween(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), locaux.getLatitude(), locaux.getLongitude(), res);
+                        publicRooms.get(i).setDistance((int) res[0]);
+                    }
+                    Collections.sort(publicRooms, new RoomComparator());
+                    //listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS).clear();
+                    for (int j = 0; j < publicRooms.size(); j++) {
+                        listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS).set(j, publicRooms.get(j));
+                    }
+                }
             }
+
         }
-        Collections.sort(publicRooms, new RoomComparator());
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

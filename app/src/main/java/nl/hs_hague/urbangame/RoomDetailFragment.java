@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
 import nl.hs_hague.urbangame.adapter.FoundCheckpointAdapter;
 import nl.hs_hague.urbangame.adapter.UserAdapter;
 import nl.hs_hague.urbangame.model.CustomTimer;
@@ -86,7 +87,7 @@ public class RoomDetailFragment extends Fragment {
             if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             }
-            currentTime = new Date(RoomListActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime());
+            currentTime = new Date(ExpandableRoomAdapter.locaux.getTime());
 
                 final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
                 ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
