@@ -219,6 +219,7 @@ public class RoomListActivity extends AppCompatActivity{
             Boolean login_fire = preferences.getBoolean("Login_fire", false);
             if (login_face) {
                 LoginManager.getInstance().logOut();//log out facebook
+                FirebaseAuth.getInstance().signOut();
                 editor.putBoolean("Login_face", false).apply();
             }
 

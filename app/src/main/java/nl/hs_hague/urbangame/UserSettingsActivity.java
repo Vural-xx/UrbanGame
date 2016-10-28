@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,10 +23,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static nl.hs_hague.urbangame.R.string.profile;
@@ -46,8 +47,8 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
 
     EditText Username, Email, Pass, Pass2;
     TextView pass,pass2,reauth;
-    String newUsername, newEmail, newPass, newPass2;
-    Uri myuri=null;
+    String newUsername, newEmail, newPass, newPass2,face_name;
+    Uri myuri=null,face_photoUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,28 +67,66 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
         pass = (TextView) findViewById(R.id.textView5);
         pass2 = (TextView) findViewById(R.id.textView6);
         reauth= (TextView) findViewById(R.id.reauth);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Boolean login_face = preferences.getBoolean("Login_face", false);
 
-                                                    //if face load facebook data and unable views
+
         if(fbUser!=null){
-                if(fbUser.getDisplayName()==null)
+
+            if(login_face)
+            {
+                for(UserInfo profile : fbUser.getProviderData()) {
+                     face_name = profile.getDisplayName();
+                    face_photoUrl = profile.getPhotoUrl();
+                }
+                Picasso.with(getApplicationContext()).load(face_photoUrl).into(Profile_Picture);
+                Username.setText(face_name);
+                Email.setText(fbUser.getEmail());
+                ////////////////////////////////////////disable views
+                Profile_Picture.setEnabled(false);
+                Username.setEnabled(false);
+                Email.setEnabled(false);
+                Pass.setVisibility(View.INVISIBLE);
+                Pass2.setVisibility(View.INVISIBLE);
+                pass.setVisibility(View.INVISIBLE);
+                pass2.setVisibility(View.INVISIBLE);
+                confirmButton.setVisibility(View.INVISIBLE);
+                reauth.setVisibility(View.INVISIBLE);
+            }
+
+            else {
+                if (fbUser.getDisplayName() == null)
                     Username.setText(fbUser.getEmail());
                 else
                     Username.setText(fbUser.getDisplayName());
 
-               if (fbUser.getPhotoUrl()!=null) //cuando no tenga imagen
-               {Profile_Picture.setImageURI(fbUser.getPhotoUrl());
-                   System.out.println(fbUser.getPhotoUrl().toString());
-               }
-               else//pone la de default
-                   Profile_Picture.setImageResource(R.drawable.com_facebook_profile_picture_blank_square);
+                Email.setText(fbUser.getEmail());
 
-               Email.setText(fbUser.getEmail());
-               Email.setEnabled(false);
-               Pass.setVisibility(View.INVISIBLE);
-               Pass2.setVisibility(View.INVISIBLE);
-               pass.setVisibility(View.INVISIBLE);
-               pass2.setVisibility(View.INVISIBLE);
-        }
+                if (fbUser.getPhotoUrl() != null) //get image from firebase
+                {      //  fbUser.getPhotoUrl() contiene la url del content provider con el que se subio la foto, por lo tanto nombre de la foto que esta en firebase
+                    mStorageReference.child("UserPhotos").child(fbUser.getPhotoUrl().getLastPathSegment()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.with(getApplicationContext()).load(uri).into(Profile_Picture);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Profile_Picture.setImageResource(R.drawable.com_facebook_profile_picture_blank_square);
+                            Toast.makeText(UserSettingsActivity.this, "Error getting user photo", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                } else//pone la de default
+                    Profile_Picture.setImageResource(R.drawable.com_facebook_profile_picture_blank_square);
+
+                Email.setEnabled(false);
+                Pass.setVisibility(View.INVISIBLE);
+                Pass2.setVisibility(View.INVISIBLE);
+                pass.setVisibility(View.INVISIBLE);
+                pass2.setVisibility(View.INVISIBLE);
+            }
+        }//user null
         else {finish();}
 
 
@@ -196,6 +235,7 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
     }
 
 
+
     public void showNoticeDialog ()
     {
         newFragment = new ReauthDialog();
@@ -237,7 +277,6 @@ public class UserSettingsActivity extends AppCompatActivity implements ReauthDia
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Profile_Picture.setImageURI(myuri);
-                    System.out.println(myuri.toString());
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
