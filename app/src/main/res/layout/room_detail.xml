@@ -120,7 +120,7 @@
                         </TableRow>
 
                         <TableRow
-                            android:layout_marginTop="50dp">
+                            >
                             <TextView
                                 android:layout_gravity="fill"
                                 android:layout_height="wrap_content"

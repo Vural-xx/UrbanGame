@@ -37,6 +37,7 @@ public class RoomDetailFragment extends Fragment {
     private ListView lvCheckpoints;
     private FoundCheckpointAdapter checkpointAdapter;
     private TextView txtleftTime;
+    private Date currentTime;
     public RoomDetailFragment() {
     }
 
@@ -79,7 +80,10 @@ public class RoomDetailFragment extends Fragment {
         tabHost.addTab(spec3);
 
         if (currentRoom != null) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+            }
+            currentTime = new Date(RoomListActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime());
 
                 final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
                 ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
@@ -90,24 +94,31 @@ public class RoomDetailFragment extends Fragment {
                 txtleftTime = (TextView) rootView.findViewById(R.id.time_text);
                 if (currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)) {
                     bntJoinRoom.setVisibility(View.INVISIBLE);
-                    ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
-                    ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
-                    ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
+                    if(currentRoom.timeLeft(currentTime)){
+                        ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
+                        ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
+                        ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
+                    }
                 } else {
                     view.setVisibility(View.INVISIBLE);//hide map
-                    bntJoinRoom.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (currentRoom.getMembers() == null) {
-                                List<User> userList = new ArrayList<User>();
-                                currentRoom.setMembers(userList);
-                            }
-                            currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
-                            RoomListActivity.databaseHandler.createRoom(currentRoom);
-                            roomDetail.setVisibility(View.INVISIBLE);
+                    if(currentRoom.timeLeft(currentTime)){
+                        bntJoinRoom.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (currentRoom.getMembers() == null) {
+                                    List<User> userList = new ArrayList<User>();
+                                    currentRoom.setMembers(userList);
+                                }
+                                currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+                                RoomListActivity.databaseHandler.createRoom(currentRoom);
+                                roomDetail.setVisibility(View.INVISIBLE);
 
-                        }
-                    });
+                            }
+                        });
+                    }else {
+                        bntJoinRoom.setVisibility(View.INVISIBLE);
+                    }
+
                 }
                 displayLeftTime();
                 // get the listview
@@ -137,10 +148,6 @@ public class RoomDetailFragment extends Fragment {
     }
 
     public void displayLeftTime(){
-            if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            }
-            Date currentTime = new Date(RoomListActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime());
         if(currentRoom.timeLeft(currentTime)){
             CustomTimer customTimer =  currentRoom.getLeftTime(currentTime);
             String timeLeft ="";

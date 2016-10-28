@@ -176,6 +176,6 @@ public class Room implements Serializable {
     }
 
     public boolean timeLeft(Date currentTime){
-        return (endDate.getTime() - currentTime.getTime()) > 0;
+        return endDate.after(currentTime);
     }
 }
