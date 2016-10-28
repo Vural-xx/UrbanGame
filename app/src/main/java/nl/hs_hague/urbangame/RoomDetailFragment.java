@@ -74,10 +74,13 @@ public class RoomDetailFragment extends Fragment {
         spec2.setIndicator("Members");
         tabHost.addTab(spec2);
 
-        TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
-        spec3.setContent(R.id.tab3);
-        spec3.setIndicator("Progress");
-        tabHost.addTab(spec3);
+        if(!currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+            TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
+            spec3.setContent(R.id.tab3);
+            spec3.setIndicator("Progress");
+            tabHost.addTab(spec3);
+        }
+
 
         if (currentRoom != null) {
             if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
