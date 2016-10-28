@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -60,7 +61,7 @@ public class RoomListActivity extends AppCompatActivity{
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
-    private String searchQuery;
+    private String searchQuery = "";
     public static final String HEADER_STARTED_ROOMS = "Started Rooms";
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
@@ -166,7 +167,31 @@ public class RoomListActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+        if(searchQuery != null &&  searchQuery != ""){
+            searchView.setIconified(false);
+            searchView.setQuery(searchQuery,false);
+            searchView.setQueryHint(searchQuery);
+            searchView.clearFocus();
+        }else{
+            searchView.setIconified(true);
+        }
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if(searchQuery != ""){
+                    Intent intent = new Intent(getApplicationContext(), RoomListActivity.class);
+                    intent.setAction(Intent.ACTION_SEARCH);
+                    intent.setData(Uri.parse(""));
+                    searchQuery="";
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return super.onCreateOptionsMenu(menu);
@@ -279,7 +304,7 @@ public class RoomListActivity extends AppCompatActivity{
         databaseHandler = new DatabaseHandler();
 
         searchQuery = "";
-        Intent searchIntent = getIntent();
+        final Intent searchIntent = getIntent();
         if (Intent.ACTION_SEARCH.equals(searchIntent.getAction())) {
             searchQuery = searchIntent.getStringExtra(SearchManager.QUERY);
         }
@@ -322,6 +347,13 @@ public class RoomListActivity extends AppCompatActivity{
                             rooms.put(roomsHeader.get(2), new ArrayList<Room>(ownSet));
                             roomAdapter.updateRooms(new ArrayList<Room>(ownSet), 2);
                             lvRooms.expandGroup(0);
+                            if(searchQuery != null && searchQuery != "" ){
+                                lvRooms.expandGroup(1);
+                                lvRooms.expandGroup(2);
+                            }else{
+                                lvRooms.collapseGroup(1);
+                                lvRooms.collapseGroup(2);
+                            }
                             setCheckpointAlerts();
                         }
 
