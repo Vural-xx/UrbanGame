@@ -175,7 +175,11 @@ public class RoomCreateFragment extends DialogFragment {
                     endDate = calendar.getTime();
                     etEnd.setText(dateFormatter.format(calendar.getTime()));
                 }
-                alertDialog.dismiss();
+                if(endDate != null && endDate.before(startDate)){
+                    Toast.makeText(context, "Please set the  endTime after the startTime", Toast.LENGTH_SHORT).show();
+                }else{
+                    alertDialog.dismiss();
+                }
             }});
         alertDialog.setView(dialogView);
         alertDialog.show();
