@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -15,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -24,29 +22,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,8 +48,6 @@ import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 import nl.hs_hague.urbangame.util.CustomLocationListener;
-
-import static nl.hs_hague.urbangame.Welcome_Screen.GPS_SETTINGS;
 
 public class RoomListActivity extends AppCompatActivity{
 
@@ -380,21 +366,21 @@ public class RoomListActivity extends AppCompatActivity{
     }
 
     public void addCheckpointAlert(Checkpoint checkpoint){
-
-        // 100 meter radius
-        float radius = 100f;
-        // Expiration is 10 Minutes
-        long expiration = 600000;
-        Intent geoIntent = new Intent("ACTION_PROXIMITY_ALERT");
-        geoIntent.putExtra("checkpoint", checkpoint);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_ONE_SHOT);
-        locationManager.addProximityAlert(checkpoint.getLatitude(), checkpoint.getLongitude(), radius, expiration, pendingIntent);
-        alertedCheckpoints.add(checkpoint);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            getPermission();
-            return;
+        if(checkpoint != null){
+            // 100 meter radius
+            float radius = 100f;
+            // Expiration is 10 Minutes
+            long expiration = 600000;
+            Intent geoIntent = new Intent("ACTION_PROXIMITY_ALERT");
+            geoIntent.putExtra("checkpoint", checkpoint);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, geoIntent, PendingIntent.FLAG_ONE_SHOT);
+            locationManager.addProximityAlert(checkpoint.getLatitude(), checkpoint.getLongitude(), radius, expiration, pendingIntent);
+            alertedCheckpoints.add(checkpoint);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                getPermission();
+                return;
+            }
         }
-
     }
 }
 
