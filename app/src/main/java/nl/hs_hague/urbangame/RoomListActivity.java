@@ -82,32 +82,14 @@ public class RoomListActivity extends AppCompatActivity{
     public  static  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
     public static LocationManager locationManager;
     private GoogleApiClient client;
-    private LocationRequest mLocationRequest;
-    private PendingResult<LocationSettingsResult> result;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_list);
+
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).addApi(LocationServices.API).build();
-        int permission = ContextCompat.checkSelfPermission(RoomListActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if( permission != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(RoomListActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                                /*Permission denied before*/
-                ActivityCompat.requestPermissions(RoomListActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-            } else {
-
-
-                ActivityCompat.requestPermissions(RoomListActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                       1);
-
-            }
-        }
-
         if (findViewById(R.id.room_detail_container) != null) {
             mTwoPane = true;
         }
@@ -374,49 +356,6 @@ public class RoomListActivity extends AppCompatActivity{
         ActivityCompat.requestPermissions(activity,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 MapsActivity.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
-            switch (requestCode) {
-                case 1: {
-                    askForGPS();
-                    Toast.makeText(this,"I entered to the request",Toast.LENGTH_SHORT).show();
-                    break;
-                }
-
-            }
-        }
-    }
-    private void askForGPS(){
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(30 * 1000);
-        mLocationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-        builder.setAlwaysShow(true);
-        result = LocationServices.SettingsApi.checkLocationSettings(client, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(RoomListActivity.this, GPS_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        break;
-                }
-            }
-        });
     }
 
 

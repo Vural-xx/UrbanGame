@@ -5,15 +5,16 @@
     <permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="your.application.package.permission.MAPS_RECEIVE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="your.application.package.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -24,9 +25,7 @@
         android:name="nl.hs_hague.pushnotifications.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-
     <uses-permission android:name="nl.hs_hague.pushnotifications.permission.C2D_MESSAGE" />
-
 
     <application
         android:name=".UrbanGameApp"
@@ -38,14 +37,21 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <activity android:name=".PermissionsActivity"
+                  android:label="UrbanGame">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Welcome_Screen"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -119,14 +125,17 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Login" />
-        <activity android:name=".UserSettingsActivity"></activity>
+        <activity android:name=".UserSettingsActivity" />
 
-        <receiver android:name=".util.CheckpointReceiver"
+        <receiver
+            android:name=".util.CheckpointReceiver"
             android:exported="true">
-            <intent-filter >
+            <intent-filter>
                 <action android:name="ACTION_PROXIMITY_ALERT" />
             </intent-filter>
         </receiver>
+
+
     </application>
 
 </manifest>
