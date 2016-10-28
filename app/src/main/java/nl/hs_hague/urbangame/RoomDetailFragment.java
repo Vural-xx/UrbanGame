@@ -151,14 +151,18 @@ public class RoomDetailFragment extends Fragment {
         if(currentRoom.timeLeft(currentTime)){
             CustomTimer customTimer =  currentRoom.getLeftTime(currentTime);
             String timeLeft ="";
+
             if(customTimer.getDaysLeft() > 0){
                 timeLeft = timeLeft + customTimer.getDaysLeft() +" Days ";
+                customTimer.setHoursLeft(customTimer.getHoursLeft() -(24 * customTimer.getDaysLeft()));
             }
             if(customTimer.getHoursLeft() > 0){
-                timeLeft = timeLeft + customTimer.getMinutesLeft()/60 +" Hours ";
+                timeLeft = timeLeft + customTimer.getHoursLeft() +" Hours ";
+                customTimer.setMinutesLeft(customTimer.getMinutesLeft() -(24 * 60 * customTimer.getDaysLeft()));
+                customTimer.setMinutesLeft(customTimer.getMinutesLeft() -(60 * customTimer.getHoursLeft()));
             }
             if(customTimer.getMinutesLeft() > 0){
-                timeLeft = timeLeft + customTimer.getMinutesLeft()/60 +" Minutes ";
+                timeLeft = timeLeft + customTimer.getMinutesLeft() +" Minutes ";
             }
 
             txtleftTime.setText(timeLeft);
