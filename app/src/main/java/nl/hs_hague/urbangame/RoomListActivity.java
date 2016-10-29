@@ -404,9 +404,11 @@ public class RoomListActivity extends AppCompatActivity{
     }
 
     public boolean alertedCheckpointCreated(Checkpoint checkpoint){
-        for (int i =0 ; i < alertedCheckpoints.size(); i++){
-            if(alertedCheckpoints.get(i).getName().equals(checkpoint.getName())){
-                return true;
+        if(checkpoint != null){
+            for (int i =0 ; i < alertedCheckpoints.size(); i++){
+                if(alertedCheckpoints.get(i).getName().equals(checkpoint.getName())){
+                    return true;
+                }
             }
         }
         return false;
