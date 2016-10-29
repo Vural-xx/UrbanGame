@@ -30,7 +30,7 @@ import nl.hs_hague.urbangame.model.User;
 public class RoomDetailFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_id";
-    private Room currentRoom;
+    public static Room currentRoom;
     private Button bntJoinRoom;
     private View view;
     private ListView lvMembers;
@@ -39,7 +39,7 @@ public class RoomDetailFragment extends Fragment {
     private FoundCheckpointAdapter checkpointAdapter;
     private TextView txtleftTime;
     private Date currentTime;
-    private TextView txtCurrentHint;
+    private  TextView txtCurrentHint;
     public RoomDetailFragment() {
     }
 
@@ -101,14 +101,7 @@ public class RoomDetailFragment extends Fragment {
                     bntJoinRoom.setVisibility(View.INVISIBLE);
                     if(currentRoom.timeLeft(currentTime)){
                         txtCurrentHint = (TextView) rootView.findViewById(R.id.hints_text);
-                        Checkpoint currentCheckpoint = currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
-                        String currentHint = "";
-                        if(currentCheckpoint != null){
-                            currentHint = currentCheckpoint.getHint();
-                        }else{
-                            currentHint ="Game completed";
-                        }
-                        txtCurrentHint.setText(currentHint);
+                        setCurrentCheckpointText();
                         ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
                     }
                 } else {
@@ -184,6 +177,17 @@ public class RoomDetailFragment extends Fragment {
 
     }
 
+
+    public static void setCurrentCheckpointText(){
+        Checkpoint currentCheckpoint = currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
+        String currentHint = "";
+        if(currentCheckpoint != null){
+            currentHint = currentCheckpoint.getHint();
+        }else{
+            currentHint ="Game completed";
+        }
+        txtCurrentHint.setText(currentHint);
+    }
 
 
 }
