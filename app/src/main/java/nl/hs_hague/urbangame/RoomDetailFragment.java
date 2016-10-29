@@ -178,7 +178,7 @@ public class RoomDetailFragment extends Fragment {
     }
 
 
-    public static void setCurrentCheckpointText(){
+    public void setCurrentCheckpointText(){
         Checkpoint currentCheckpoint = currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
         String currentHint = "";
         if(currentCheckpoint != null){
