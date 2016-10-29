@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
+import nl.hs_hague.urbangame.comparator.RoomComparator;
 import nl.hs_hague.urbangame.database.DatabaseHandler;
 import nl.hs_hague.urbangame.fcm.RegistrationIntentService;
 import nl.hs_hague.urbangame.model.Checkpoint;
@@ -66,6 +68,7 @@ public class RoomListActivity extends AppCompatActivity{
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
     public static FirebaseAuth firebaseAuth;
+    private Room currentRoom;
     public  static  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
     public static LocationManager locationManager;
     private GoogleApiClient client;
@@ -116,6 +119,7 @@ public class RoomListActivity extends AppCompatActivity{
 
         roomAdapter = new ExpandableRoomAdapter(this, roomsHeader);
         // setting list adapter
+
         lvRooms.setAdapter(roomAdapter);
 
 
@@ -132,10 +136,18 @@ public class RoomListActivity extends AppCompatActivity{
         lvRooms.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
-                Room currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(childPosition);
-                for(int j=0; j < rooms.get(roomsHeader.get(groupPosition)).size(); j++){
-                    System.out.println(rooms.get(roomsHeader.get(groupPosition)).get(j).getName());
+                if(groupPosition == 1) {
+                    List<Room> publicRooms = rooms.get(roomsHeader.get(groupPosition));
+                    int j;
+                    Collections.sort(rooms.get(roomsHeader.get(groupPosition)), new RoomComparator());
+                    for (j = 0; j < rooms.get(roomsHeader.get(groupPosition)).size(); j++) {
+                        if (rooms.get(roomsHeader.get(groupPosition)).get(j).getName().equals(publicRooms.get(childPosition).getName()))
+                            break;
+                    }
+                     currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(j);
+                }
+                else{
+                     currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(childPosition);
                 }
                 if (mTwoPane) {
                     RoomDetailFragment fragment = new RoomDetailFragment();
