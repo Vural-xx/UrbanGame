@@ -5,7 +5,6 @@ import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -182,8 +181,9 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     public void updateRooms(List<Room> newlist, int group) {
         listDataChild.get(listDataHeader.get(group)).clear();
         listDataChild.get(listDataHeader.get(group)).addAll(newlist);
-        if(group == 1)
-        calculateDistance();
+        if(group == 1){
+            calculateDistance();
+        }
         this.notifyDataSetChanged();
     }
 

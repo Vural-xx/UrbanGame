@@ -2,7 +2,6 @@ package nl.hs_hague.urbangame;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +22,7 @@ import java.util.List;
 import nl.hs_hague.urbangame.adapter.ExpandableRoomAdapter;
 import nl.hs_hague.urbangame.adapter.FoundCheckpointAdapter;
 import nl.hs_hague.urbangame.adapter.UserAdapter;
+import nl.hs_hague.urbangame.model.Checkpoint;
 import nl.hs_hague.urbangame.model.CustomTimer;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
@@ -39,6 +39,7 @@ public class RoomDetailFragment extends Fragment {
     private FoundCheckpointAdapter checkpointAdapter;
     private TextView txtleftTime;
     private Date currentTime;
+    private TextView txtCurrentHint;
     public RoomDetailFragment() {
     }
 
@@ -99,8 +100,15 @@ public class RoomDetailFragment extends Fragment {
                 if (currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) || RoomListActivity.playerMemberofRoom(currentRoom)) {
                     bntJoinRoom.setVisibility(View.INVISIBLE);
                     if(currentRoom.timeLeft(currentTime)){
-                        ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.gethints());
-                        ((TextView) rootView.findViewById(R.id.hints_text)).setText(currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).getHint());
+                        txtCurrentHint = (TextView) rootView.findViewById(R.id.hints_text);
+                        Checkpoint currentCheckpoint = currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
+                        String currentHint = "";
+                        if(currentCheckpoint != null){
+                            currentHint = currentCheckpoint.getHint();
+                        }else{
+                            currentHint ="Game completed";
+                        }
+                        txtCurrentHint.setText(currentHint);
                         ((TextView) rootView.findViewById(R.id.hints_label)).setText("Current Hint:");
                     }
                 } else {

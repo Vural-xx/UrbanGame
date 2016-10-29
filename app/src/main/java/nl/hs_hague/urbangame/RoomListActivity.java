@@ -55,9 +55,9 @@ import nl.hs_hague.urbangame.util.CustomLocationListener;
 public class RoomListActivity extends AppCompatActivity{
 
     private boolean mTwoPane;
-    ExpandableRoomAdapter roomAdapter;
-    ExpandableListView lvRooms;
-    List<String> roomsHeader;
+    private ExpandableRoomAdapter roomAdapter;
+    private ExpandableListView lvRooms;
+    private List<String> roomsHeader;
     public static  HashMap<String, List<Room>> rooms;
     private Context context = null;
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
