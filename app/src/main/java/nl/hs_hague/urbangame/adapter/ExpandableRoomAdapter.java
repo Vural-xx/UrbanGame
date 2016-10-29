@@ -54,31 +54,19 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         List<Room> publicRooms = listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS);
         CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);
         locaux = objCurrentLocationAdapter.getCurrentLocation();
-        Geocoder geo = new Geocoder(_context);
-        try {
-            markersAddress = geo.getFromLocation(locaux.getLatitude(), locaux.getLongitude(), 2);
-            String currentCity = markersAddress.get(0).getLocality();
-            String roomCity="";
-            for (int i = 0; i < publicRooms.size(); i++) {
 
+
+            for (int i = 0; i < publicRooms.size(); i++) {
                 if (!publicRooms.get(i).getCheckpoints().isEmpty()) {
-                    markersAddress = geo.getFromLocation(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), 2);
-                    roomCity = markersAddress.get(0).getLocality();
-                    if (roomCity.equals(currentCity)) {
+
                         locaux.distanceBetween(publicRooms.get(i).getCheckpoints().get(0).getLatitude(), publicRooms.get(i).getCheckpoints().get(0).getLongitude(), locaux.getLatitude(), locaux.getLongitude(), res);
                         publicRooms.get(i).setDistance((int) res[0]);
-                    }
-                    Collections.sort(publicRooms, new RoomComparator());
-                    //listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS).clear();
-                    for (int j = 0; j < publicRooms.size(); j++) {
-                        listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS).set(j, publicRooms.get(j));
-                    }
+
                 }
             }
-
-        }
-        catch(Exception e){
-            e.printStackTrace();
+        Collections.sort(publicRooms, new RoomComparator());
+        for (int j = 0; j < publicRooms.size(); j++) {
+            listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS).set(j, publicRooms.get(j));
         }
     }
 
@@ -109,6 +97,9 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.room_name);
+        TextView childDistance = (TextView) convertView
+                .findViewById(R.id.room_distance);
+        childDistance.setText("");
         if(groupPosition == 0){
             childText = childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size();
             if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
@@ -117,8 +108,8 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         }
         txtListChild.setText(childText);
         if(groupPosition == 1) {
-            TextView childDistance = (TextView) convertView
-                    .findViewById(R.id.room_distance);
+            System.out.println("GroupPosition: "+groupPosition + " "+ childText);
+
             childDistance.setText("Distance: " + room.getDistance()+" meters");
 
         }
@@ -191,6 +182,7 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     public void updateRooms(List<Room> newlist, int group) {
         listDataChild.get(listDataHeader.get(group)).clear();
         listDataChild.get(listDataHeader.get(group)).addAll(newlist);
+        if(group == 1)
         calculateDistance();
         this.notifyDataSetChanged();
     }

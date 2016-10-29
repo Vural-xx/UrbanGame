@@ -134,7 +134,9 @@ public class RoomListActivity extends AppCompatActivity{
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
                 Room currentRoom = rooms.get(roomsHeader.get(groupPosition)).get(childPosition);
-
+                for(int j=0; j < rooms.get(roomsHeader.get(groupPosition)).size(); j++){
+                    System.out.println(rooms.get(roomsHeader.get(groupPosition)).get(j).getName());
+                }
                 if (mTwoPane) {
                     RoomDetailFragment fragment = new RoomDetailFragment();
 
@@ -317,7 +319,7 @@ public class RoomListActivity extends AppCompatActivity{
                     databaseHandler.getRoot().child("rooms").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
+                            System.out.print("Entre a DATA");
                             Set<Room> startedSet = new HashSet<Room>();
                             Set<Room> publicSet = new HashSet<Room>();
                             Set<Room> ownSet = new HashSet<Room>();
