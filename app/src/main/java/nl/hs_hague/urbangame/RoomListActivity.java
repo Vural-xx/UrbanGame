@@ -71,9 +71,9 @@ public class RoomListActivity extends AppCompatActivity{
     // Searchquery of searchInten
     private String searchQuery = "";
     // Headers of expendable rooms
-    public static final String HEADER_STARTED_ROOMS = "Started Rooms";
-    public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
-    public static final String HEADER_OWN_ROOMS = "Own Rooms";
+    public static final String HEADER_STARTED_ROOMS = "Started Games";
+    public static final String HEADER_PUBLIC_ROOMS = "Public Games";
+    public static final String HEADER_OWN_ROOMS = "Own Games";
     // FirebaseAuth for users
     public static FirebaseAuth firebaseAuth;
     private Room currentRoom;
