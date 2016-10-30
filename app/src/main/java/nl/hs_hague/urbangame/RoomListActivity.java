@@ -52,23 +52,32 @@ import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 import nl.hs_hague.urbangame.util.CustomLocationListener;
 
+/**
+ * Master/Detail flow for rooms
+ */
 public class RoomListActivity extends AppCompatActivity{
 
     private boolean mTwoPane;
     private ExpandableRoomAdapter roomAdapter;
     private ExpandableListView lvRooms;
     private List<String> roomsHeader;
+    // Hashmap of rooms for expandable Adapter
     public static  HashMap<String, List<Room>> rooms;
     private Context context = null;
+    // Static databaseHandler for firebase
     public static DatabaseHandler databaseHandler = new DatabaseHandler();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
+    // Searchquery of searchInten
     private String searchQuery = "";
+    // Headers of expendable rooms
     public static final String HEADER_STARTED_ROOMS = "Started Rooms";
     public static final String HEADER_PUBLIC_ROOMS = "Public Rooms";
     public static final String HEADER_OWN_ROOMS = "Own Rooms";
+    // FirebaseAuth for users
     public static FirebaseAuth firebaseAuth;
     private Room currentRoom;
+    // Checkpoints to alert the user if he reaches them
     public  static  List<Checkpoint> alertedCheckpoints = new ArrayList<Checkpoint>();
     public static LocationManager locationManager;
     private GoogleApiClient client;
@@ -308,6 +317,9 @@ public class RoomListActivity extends AppCompatActivity{
         return false;
     }
 
+    /**
+     * Prepares and displays rooms from the firebase database
+     */
     public void prepareListData() {
         roomsHeader = new ArrayList<String>();
         rooms = new HashMap<String, List<Room>>();
@@ -393,6 +405,9 @@ public class RoomListActivity extends AppCompatActivity{
     }
 
 
+    /**
+     * CheckpointAlerts are set for current checkpoints for a user
+     */
     public void setCheckpointAlerts(){
         List<Room> publicRooms = rooms.get(HEADER_STARTED_ROOMS);
         for(Room r: publicRooms){
@@ -404,6 +419,11 @@ public class RoomListActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * Shows if alert is already created for checkpoint
+     * @param checkpoint: Checkpoint  to look for
+     * @return: true if checkpointAlert is already created
+     */
     public boolean alertedCheckpointCreated(Checkpoint checkpoint){
         if(checkpoint != null){
             for (int i =0 ; i < alertedCheckpoints.size(); i++){
@@ -415,6 +435,10 @@ public class RoomListActivity extends AppCompatActivity{
         return false;
     }
 
+    /**
+     * Adds checkpoint Alert to react to event if the user reaches a checkpoint
+     * @param checkpoint: Checkpoint to create proximity alert for
+     */
     public void addCheckpointAlert(Checkpoint checkpoint){
         if(checkpoint != null){
             // 100 meter radius

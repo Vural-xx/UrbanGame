@@ -7,8 +7,9 @@ import android.widget.ListView;
 
 /**
  * Created by vural on 27.10.16.
+ * Calculate and sets heights of created markers to match on a landscape mode on
+ * a smartphone device.
  */
-
 public class UIUtils {
     /**
      * Sets ListView height dynamically based on the height of the items.

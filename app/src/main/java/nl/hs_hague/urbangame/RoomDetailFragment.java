@@ -27,10 +27,15 @@ import nl.hs_hague.urbangame.model.CustomTimer;
 import nl.hs_hague.urbangame.model.Room;
 import nl.hs_hague.urbangame.model.User;
 
+/**
+ * Fragment to create a room
+ */
 public class RoomDetailFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_id";
+    // Currentroom which is called
     private Room currentRoom;
+    // Ui
     private Button bntJoinRoom;
     private View view;
     private ListView lvMembers;
@@ -141,6 +146,10 @@ public class RoomDetailFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Returns a list of members of the current room, excluding the current user
+     * @return: List of members
+     */
     public List<User> getMembersWithoutCurrentUser(){
         List<User> users = new ArrayList<>();
         if(currentRoom.getMembers() != null){
@@ -154,6 +163,9 @@ public class RoomDetailFragment extends Fragment {
         return users;
     }
 
+    /**
+     * Displays left time of a game
+     */
     public void displayLeftTime(){
         if(currentRoom.timeLeft(currentTime)){
             CustomTimer customTimer =  currentRoom.getLeftTime(currentTime);
@@ -179,7 +191,9 @@ public class RoomDetailFragment extends Fragment {
 
     }
 
-
+    /**
+     * Sets text of the current checkpoint
+     */
     public void setCurrentCheckpointText(){
         Checkpoint currentCheckpoint = currentRoom.getCurrentCheckpoint(RoomListActivity.firebaseAuth.getCurrentUser().getUid());
         String currentHint = "";

@@ -58,6 +58,7 @@ public class RoomCreateFragment extends DialogFragment {
     SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.US);
     public static final int GET_MARKERS_REQUEST = 1;  // The request code
     public static final String MARKER = "marker";
+    // List of checkpoints for room
     private List<Checkpoint> checkpoints;
     public final String checkpointholderKey = "checkpointHolder";
     private CheckpointHolder checkpointHolder;
@@ -152,6 +153,9 @@ public class RoomCreateFragment extends DialogFragment {
 
     }
 
+    /**
+     * Creates timepicker for startDate or endDAte
+     */
     public void createDateTimePicker(){
         final View dialogView = View.inflate(activity, R.layout.date_time_picker, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
@@ -203,6 +207,9 @@ public class RoomCreateFragment extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Creates list of markers after onActivityResult from MapsActivity
+     */
     public void createMarkersList(){
         LayoutInflater inflater = getActivity().getLayoutInflater();
         ViewGroup header = (ViewGroup)inflater.inflate(R.layout.marker_list_header, lvMarkers, false);

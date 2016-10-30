@@ -22,8 +22,8 @@ import static nl.hs_hague.urbangame.RoomListActivity.firebaseAuth;
 
 /**
  * Created by vural on 26.10.16.
+ * BroadcastReceiver that is getting called if the user arrives at a checkpoint
  */
-
 public class CheckpointReceiver extends BroadcastReceiver {
     private Context context;
     @Override
@@ -50,6 +50,11 @@ public class CheckpointReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * If the room has more checkpoints that the user needs to find, a new CheckpointReceiver
+     * proximityAlert is created to trigger this Receiver with the location of the next checkpoint
+     * @param checkpoint: Next checkpoint the user has to find
+     */
     public void addNewReceiver(Checkpoint checkpoint){
         // 100 meter radius
         float radius = 100f;
@@ -71,6 +76,12 @@ public class CheckpointReceiver extends BroadcastReceiver {
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 MapsActivity.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
     }
+
+    /**
+     * Checks if the user has already found the checkpoint, to avoid triggering the same alarm twice.
+     * @param checkpoint
+     * @return
+     */
     public boolean alreadyFound(Checkpoint checkpoint){
         for(int i = 0; i < checkpoint.getFoundBy().size(); i++){
             if(checkpoint.getFoundBy().get(i).equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
