@@ -25,7 +25,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         // Notification is build
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.urbangame)
+                        .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("Urban Game")
                         .setContentText(intent.getStringExtra("message"));
 
