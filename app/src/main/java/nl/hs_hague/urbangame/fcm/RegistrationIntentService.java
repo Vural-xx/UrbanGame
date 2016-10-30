@@ -13,6 +13,7 @@ import nl.hs_hague.urbangame.R;
 
 /**
  * Created by vural on 04.10.16.
+ * Registration for firebase
  */
 
 public class RegistrationIntentService extends IntentService {

@@ -15,8 +15,8 @@ import nl.hs_hague.urbangame.RoomListActivity;
 
 /**
  * Created by vural on 05.10.16.
+ * Receiver for push notifications
  */
-
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
 
     @Override

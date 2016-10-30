@@ -6,6 +6,7 @@ import com.google.android.gms.iid.InstanceIDListenerService;
 
 /**
  * Created by vural on 04.10.16.
+ * Listener if token changes
  */
 
 public class MyInstanceIDListenerService extends InstanceIDListenerService {

@@ -14,8 +14,8 @@ import nl.hs_hague.urbangame.model.Checkpoint;
 
 /**
  * Created by vural on 24.10.16.
+ * Adapter to display found checkpoints
  */
-
 public class FoundCheckpointAdapter extends ArrayAdapter<Checkpoint> {
 
     private LayoutInflater inflater;

@@ -14,8 +14,8 @@ import nl.hs_hague.urbangame.model.User;
 
 /**
  * Created by vural on 24.10.16.
+ * Adapter to display members of room
  */
-
 public class UserAdapter extends ArrayAdapter<User> {
 
     private LayoutInflater inflater;

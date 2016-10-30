@@ -23,8 +23,8 @@ import nl.hs_hague.urbangame.model.Room;
 
 /**
  * Created by vural on 06.10.16.
+ * Expandable Room Adapter to show public, started and own rooms
  */
-
 public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
 
     private Context _context;

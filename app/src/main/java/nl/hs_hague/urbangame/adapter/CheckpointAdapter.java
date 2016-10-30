@@ -14,6 +14,7 @@ import nl.hs_hague.urbangame.model.Checkpoint;
 
 /**
  * Created by vural on 08.10.16.
+ * Adapter for checkpoints
  */
 
 public class CheckpointAdapter extends ArrayAdapter<Checkpoint> {
