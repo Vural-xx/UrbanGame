@@ -76,7 +76,7 @@ public class RoomDetailFragment extends Fragment {
         spec2.setIndicator("Members");
         tabHost.addTab(spec2);
 
-        if(!currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+        if(!currentRoom.getOwnerId().equals(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) && currentRoom.isMember(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
             TabHost.TabSpec spec3 = tabHost.newTabSpec("tab3");
             spec3.setContent(R.id.tab3);
             spec3.setIndicator("Progress");

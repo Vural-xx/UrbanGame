@@ -176,4 +176,15 @@ public class Room implements Serializable {
     public boolean timeLeft(Date currentTime){
         return endDate.after(currentTime);
     }
+
+    public boolean isMember(String uuid){
+        if(members != null){
+            for(int i =0; i< members.size(); i++){
+                if(members.get(i).getUuid().equals(uuid)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
