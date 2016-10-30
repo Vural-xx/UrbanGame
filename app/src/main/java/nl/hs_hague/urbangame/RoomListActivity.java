@@ -136,6 +136,7 @@ public class RoomListActivity extends AppCompatActivity{
         lvRooms.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+               /*Sorting the public rooms by the distance from user's current location and the first checkpoint of each room*/
                 if(groupPosition == 1) {
                     List<Room> publicRooms = rooms.get(roomsHeader.get(groupPosition));
                     int j;

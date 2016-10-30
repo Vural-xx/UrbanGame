@@ -31,7 +31,6 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
     private Context _context;
     public static Location locaux;
     private List<String> listDataHeader; // header titles
-    private List<Address> markersAddress;
     // child data in format of header title, child title
     private HashMap<String, List<Room>> listDataChild;
     private float[] res;
@@ -41,14 +40,13 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         this.listDataHeader = listDataHeader;
         res = new float[20];
         listDataChild = new HashMap<String, List<Room>>();
-        markersAddress = new ArrayList<Address>();
         for(int i = 0; i < listDataHeader.size(); i++){
             listDataChild.put(listDataHeader.get(i), new ArrayList<Room>());
         }
 
     }
 
-
+    /*Method used to set the distance of each room, this method is only used with the PUBLIC ROOMS that are those that a player can join*/
     public void calculateDistance(){
         List<Room> publicRooms = listDataChild.get(RoomListActivity.HEADER_PUBLIC_ROOMS);
         CurrentLocationAdapter objCurrentLocationAdapter = new CurrentLocationAdapter(_context);

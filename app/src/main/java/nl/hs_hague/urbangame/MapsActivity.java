@@ -187,11 +187,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Create an instance of the dialog fragment and show it
         dialog = new MarkersFragment();
         Bundle arguments = new Bundle();
+        //Using an interface in order to communicate with Dialog Fragment called MarkersFragment
         arguments.putString(MarkersFragment.ARG_ITEM,markerid);
         dialog.setArguments(arguments);
         dialog.show(getSupportFragmentManager(), "Add a name to your marker");
     }
-    /******/
+    /*** This is the method that is called everytime a user wants to add a new checkpoint in the map***/
     void mapLongListener(LatLng latLng){
             int index = 0;
             String cLocality, mLocality;
@@ -231,7 +232,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
     }
 
-    /********/
+    /***This method is called when the user wants to modify the information of a checkpoint*****/
     public boolean markerClick(Marker arg0){
             showNoticeDialog(arg0.getId());
             int i = 0;
@@ -305,11 +306,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
-    /*I have not tried this method yet but it is supposed to compare your current location with all the coordenates that are saverd as a marker*/
+
     @Override
     public void onLocationChanged(Location location) {
     }
-
+/**In this class we override the onDialogPositiveClick method from a Dialog Fragment in order to get the values set in the fragment **/
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String name, String hint, String id) {
         mess = name;
@@ -364,7 +365,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, this);
     }
-
+   /**Mehtod use to retrieve all the markers and saved the in Firebase**/
     private void retrieveMarkers(){
         Intent intent = this.getIntent();
         CheckpointHolder checkpointHolder = new CheckpointHolder();

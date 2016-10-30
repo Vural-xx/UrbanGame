@@ -8,6 +8,8 @@ import android.support.v4.app.ActivityCompat;
 
 /**
  * Created by alex on 10/10/2016.
+ *
+ * Class used to get the current location of the user once he/ she has logged in
  */
 
 public class CurrentLocationAdapter {
@@ -28,7 +30,7 @@ public class CurrentLocationAdapter {
 
 
     }
-
+/**This method only defines which location provider is better in order to get the user´s location**/
     private Location getLastBestLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling

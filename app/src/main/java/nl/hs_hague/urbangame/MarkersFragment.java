@@ -19,6 +19,7 @@ public class MarkersFragment extends DialogFragment {
 
 
     public interface MakersFragmentListener {
+        /**Setting the interface that we are using in the MapsActivity in order to communicate with it**/
         public void onDialogPositiveClick(DialogFragment dialog, String name, String hint, String id);
     }
 
@@ -46,7 +47,6 @@ public class MarkersFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         name_text = (EditText) inflator.findViewById(R.id.name_marker);
                         hint = (EditText) inflator.findViewById(R.id.hint_marker);
-                        //name_text.setText("Yellow");
                         mListener.onDialogPositiveClick(MarkersFragment.this,name_text.getText().toString(), hint.getText().toString(),name);
 
 
