@@ -9,11 +9,17 @@ import java.util.List;
  */
 
 public class Checkpoint implements Serializable{
+    // Name of the checkpoint
     private String name;
+    // Latitude of the checkpoint
     private Double latitude;
+    // Longitute of the checkpoint
     private Double longitude;
+    // Hint of the checkpoint
     private String hint;
+    // List of uuids from users to see who already found this checkpoint
     private List<String> foundBy;
+
 
     public Checkpoint(){
         foundBy = new ArrayList<String>();

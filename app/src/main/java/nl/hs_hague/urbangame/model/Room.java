@@ -13,15 +13,22 @@ import java.util.List;
 /**
  * Created by vural on 26.09.16.
  */
-
 public class Room implements Serializable {
+    // Name of Gameroom
     private String name;
+    // Description of the room
     private String description;
+    // Ownerid of the room
     private String ownerId;
+    // List of members of the room
     private List<User> members;
+    // The start Date of the room
     private Date startDate;
+    // The end Date of the room
     private Date endDate;
+    // The distance of the first marker of the room
     private int distance;
+    // The List list of checkpoint of the room
     private List<Checkpoint> checkpoints;
 
     public Room(){
@@ -100,18 +107,11 @@ public class Room implements Serializable {
         this.checkpoints = checkpoints;
     }
 
-    public String gethints()
-    {
-        String hints="";
-
-        for(int i=0;i<checkpoints.size();i++)
-        {
-            Checkpoint mycheck=checkpoints.get(i);
-            hints=hints+mycheck.getHint()+"\n";
-        }
-        return hints;
-    }
-
+    /**
+     * Returns the currentCheckpoint of this room for the current user
+     * @param uuid: Uuid of the current user
+     * @return: Current checkpoint
+     */
     public Checkpoint getCurrentCheckpoint(String uuid){
         Checkpoint currentCheckpoint = null;
         for(int i = 0; i < checkpoints.size(); i++){
@@ -129,10 +129,19 @@ public class Room implements Serializable {
         return currentCheckpoint;
     }
 
+    /**
+     * Sets the checkpoint as found for the current user
+     * @param uuid: Uuid of the current user
+     */
     public void foundCheckpoint(String uuid){
         getCurrentCheckpoint(uuid).getFoundBy().add(uuid);
     }
 
+    /**
+     * Returns a list of checkpoints that the user has found already
+     * @param uuid: Uuid of the current user
+     * @return: Found Checkpoints
+     */
     public List<Checkpoint> foundCheckPoints(String uuid){
         List<Checkpoint> tempCheckpoints = new ArrayList<Checkpoint>();
         for(int i = 0; i < checkpoints.size(); i++){
@@ -145,12 +154,22 @@ public class Room implements Serializable {
         return tempCheckpoints;
     }
 
+    /**
+     * Gets the checkpoints
+     * @param uuid
+     * @return
+     */
     public List<Checkpoint> getCheckpointsForUser(String uuid){
         List<Checkpoint> tempCheckpoints = new ArrayList<Checkpoint>();
         tempCheckpoints.add(getCurrentCheckpoint(uuid));
         return tempCheckpoints;
     }
 
+    /**
+     * Checks if room has checkpoint with same name as in parameter
+     * @param checkpoint: Checkpoint to look for
+     * @return: true if room contains checkpoint in param
+     */
     public boolean containsChechkpoint(Checkpoint checkpoint){
         if(checkpoint != null){
             for(int i = 0; i < checkpoints.size(); i++){
@@ -162,21 +181,41 @@ public class Room implements Serializable {
         return false;
     }
 
+    /**
+     * Shows if the user has found all the checkpoints in a room
+     * @param uuid: Uuid of user
+     * @return: true if all checkpoints have been found by the user
+     */
     public boolean roomCompleted(String uuid){
         return foundCheckPoints(uuid).size() == checkpoints.size();
     }
 
 
+    /**
+     * Calculates the left time of this room
+     * @param currentTime: CurrentTime of the location, the user is in
+     * @return: CustomTimer with left time
+     */
     public CustomTimer getLeftTime(Date currentTime){
         DateTime currentDateTime = new DateTime(currentTime.getTime());
         DateTime endDateTime = new DateTime(endDate.getTime());
         return new CustomTimer(Days.daysBetween(currentDateTime,endDateTime).getDays(), Hours.hoursBetween(currentDateTime,endDateTime).getHours(), Minutes.minutesBetween(currentDateTime,endDateTime).getMinutes());
     }
 
+    /**
+     * Shows if the time of the room is over
+     * @param currentTime: Current time of location
+     * @return: True if time for the room is left
+     */
     public boolean timeLeft(Date currentTime){
         return endDate.after(currentTime);
     }
 
+    /**
+     * Shows if user is member of the room
+     * @param uuid: Uuid of user
+     * @return: ture if user is member of room
+     */
     public boolean isMember(String uuid){
         if(members != null){
             for(int i =0; i< members.size(); i++){
