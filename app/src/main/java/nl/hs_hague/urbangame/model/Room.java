@@ -152,9 +152,11 @@ public class Room implements Serializable {
     }
 
     public boolean containsChechkpoint(Checkpoint checkpoint){
-        for(int i = 0; i < checkpoints.size(); i++){
-            if(checkpoints.get(i).getName().equals(checkpoint.getName())){
-                return true;
+        if(checkpoint != null){
+            for(int i = 0; i < checkpoints.size(); i++){
+                if(checkpoints.get(i).getName().equals(checkpoint.getName())){
+                    return true;
+                }
             }
         }
         return false;
