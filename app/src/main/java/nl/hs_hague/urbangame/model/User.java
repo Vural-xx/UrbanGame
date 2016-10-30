@@ -23,6 +23,10 @@ public class User implements Serializable {
     public User(String uuid){
         this.uuid = uuid;
     }
+    public User(String uuid, String email){
+        this.uuid = uuid;
+        this.email = email;
+    }
 
     public String getUuid() {
         return uuid;

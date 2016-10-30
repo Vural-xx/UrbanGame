@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.location.Address;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,8 +98,10 @@ public class ExpandableRoomAdapter extends BaseExpandableListAdapter {
         childDistance.setText("");
         if(groupPosition == 0){
             childText = childText + " " + room.foundCheckPoints(RoomListActivity.firebaseAuth.getCurrentUser().getUid()).size() + "/" + room.getCheckpoints().size();
-            if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
+            if(room.roomCompleted(RoomListActivity.firebaseAuth.getCurrentUser().getUid()) && room.isMember(RoomListActivity.firebaseAuth.getCurrentUser().getUid())){
                 txtListChild.setTextColor(Color.GREEN);
+            }else {
+                txtListChild.setTextColor(Color.BLACK);
             }
         }
         txtListChild.setText(childText);

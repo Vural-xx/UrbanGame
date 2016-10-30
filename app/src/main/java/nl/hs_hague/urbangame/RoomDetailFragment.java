@@ -30,7 +30,7 @@ import nl.hs_hague.urbangame.model.User;
 public class RoomDetailFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_id";
-    public static Room currentRoom;
+    private Room currentRoom;
     private Button bntJoinRoom;
     private View view;
     private ListView lvMembers;
@@ -81,6 +81,8 @@ public class RoomDetailFragment extends Fragment {
             spec3.setContent(R.id.tab3);
             spec3.setIndicator("Progress");
             tabHost.addTab(spec3);
+        }else {
+            rootView.findViewById(R.id.tab3).setVisibility(View.GONE);
         }
 
 
@@ -93,7 +95,7 @@ public class RoomDetailFragment extends Fragment {
                 final LinearLayout roomDetail = (LinearLayout) rootView.findViewById(R.id.room_detail_holder);
                 ((TextView) rootView.findViewById(R.id.room_detail)).setText(currentRoom.getName());
                 ((TextView) rootView.findViewById(R.id.room_description)).setText(currentRoom.getDescription());
-                bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join_room);
+                bntJoinRoom = (Button) rootView.findViewById(R.id.btn_join);
                 view = (View) rootView.findViewById(R.id.map_fragment);
                 ((TextView) rootView.findViewById(R.id.time_label)).setText("Left Time:");
                 txtleftTime = (TextView) rootView.findViewById(R.id.time_text);
@@ -114,7 +116,7 @@ public class RoomDetailFragment extends Fragment {
                                     List<User> userList = new ArrayList<User>();
                                     currentRoom.setMembers(userList);
                                 }
-                                currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid()));
+                                currentRoom.getMembers().add(new User(RoomListActivity.firebaseAuth.getCurrentUser().getUid(), RoomListActivity.firebaseAuth.getCurrentUser().getEmail()));
                                 RoomListActivity.databaseHandler.createRoom(currentRoom);
                                 roomDetail.setVisibility(View.INVISIBLE);
 
